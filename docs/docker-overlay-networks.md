@@ -11,6 +11,8 @@
 
 本文主要介绍封包模式。`Overlay`网络主要有两种方式，一种是使用UDP在用户态封装，一种是利用`VXLAN` 在内核态封装。由于减少了用户态到内核态的切换，封包解包逻辑都在内核态进行，`VXLAN` 的性能更好，成为了容器网络的主流方案。
 
+关于路由模式，会在[下一篇文章](./docker-route-networks.md)介绍。
+
 ## VXLAN
 
 `VXLAN`（Virtual Extensible LAN）是一种网络虚拟化技术，它将链路层的以太网包封装到UDP包中进行传输。`VXLAN`最初是由VMware、Cisco开发，主要解决云环境下多租户的二层网络隔离。我们常听到公有云厂商宣称支持`VPC`（virtual private cloud），实际底层就是使用`VXLAN`实现的。
@@ -351,5 +353,7 @@ sudo bridge fdb append [docker1的MAC地址]  dev vxlan100 dst 192.168.31.183
 ```
 
 相信通过亲自动手实验，容器网络对你来说不再神秘。希望本文对你理解容器网络有所帮助。
+
+下一篇我将动手实验容器跨主机通信的[路由模式](./docker-route-networks.md)。
 
 
