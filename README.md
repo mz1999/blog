@@ -14,6 +14,7 @@
 ## Docker容器
 * [Docker单机网络模型动手实验](./docs/docker-network-bridge.md)
 * [Docker跨主机Overlay网络动手实验](./docs/docker-overlay-networks.md)
+* [Docker跨主机通信路由模式动手实验](./docs/docker-route-networks.md)
 
 ## Linux & networking
 * [为Wireshark编写HSF2协议解析插件](https://github.com/mz1999/Apusic-db-team/blob/master/docs/hsf.md)
