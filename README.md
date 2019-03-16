@@ -32,7 +32,8 @@
 * [Linux内核参数的配置方法](https://github.com/mz1999/Apusic-db-team/blob/master/docs/linux-kernel-parameter.md)
 
 ## 开发
-* [Go语言的引用类型](https://github.com/mz1999/Apusic-db-team/blob/master/docs/go-reference-types.md)
-* [Golang error处理实践](https://github.com/mz1999/Apusic-db-team/blob/master/docs/golang-error-handling.md)
+* [VS code快捷键](./docs/vscode.md)
 * [Git Feature Branch Workflow](https://github.com/mz1999/Apusic-db-team/blob/master/docs/github-workflow.md)
+* [Golang error处理实践](https://github.com/mz1999/Apusic-db-team/blob/master/docs/golang-error-handling.md)
+* [Go语言的引用类型](https://github.com/mz1999/Apusic-db-team/blob/master/docs/go-reference-types.md)
 
