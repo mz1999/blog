@@ -2,6 +2,7 @@
 
 ## Kubernetes
 * [Kubernetes 工作原理概述](./docs/kubernetes-overview.md)
+* [Helm的安装和使用](./docs/helm-quickstart.md)
 
 ## Docker容器
 * [容器技术创新漫谈](./docs/container-innovation.md)
