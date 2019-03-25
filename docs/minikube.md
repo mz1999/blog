@@ -60,6 +60,15 @@ kubernetes-dashboard-7d8d567b4d-h82vx   1/1     Running   0          18m
 storage-provisioner                     1/1     Running   0          18m
 ```
 
+* **停止Minikube**
+
+```
+$ minikube stop
+
+✋  Stopping "minikube" in virtualbox ...
+🛑  "minikube" stopped.
+```
+
 * **删除本地集群**
 
 ```
