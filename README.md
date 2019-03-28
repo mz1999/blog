@@ -32,6 +32,7 @@
 * [应用关闭后占用端口时间过长的问题](https://github.com/mz1999/Apusic-db-team/blob/master/docs/time-wait.md)
 * [使用USE Method分析系统性能问题](https://github.com/mz1999/Apusic-db-team/blob/master/docs/use-method.md)
 * [Linux内核参数的配置方法](https://github.com/mz1999/Apusic-db-team/blob/master/docs/linux-kernel-parameter.md)
+* [如何让用户拥有sudo权限](./docs/sudo.md)
 
 ## 开发
 * [VS code快捷键](./docs/vscode.md)
