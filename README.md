@@ -1,6 +1,7 @@
 # Blog
 
 ## Kubernetes
+* [Kubernetes集群的身份验证](./docs/kubernetes-authentication.md)
 * [Kubernetes 工作原理概述](./docs/kubernetes-overview.md)
 * [Helm的安装和使用](./docs/helm-quickstart.md)
 * [在Ubuntu上安装Minikube](./docs/minikube.md)
