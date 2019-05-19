@@ -17,17 +17,17 @@
 
 ### 理解数字证书
 
-非对称加密算法是证书的基础。数字签名、数字证书等一系列概念有点绕，但只要记住：**公匙用来加密**，**私匙用来签名** 就可以了。
+非对称加密算法是证书的基础。数字签名、数字证书等一系列概念有点绕，但只要记住：**公钥用来加密**，**私钥用来签名** 就可以了。
 
-怎么理解呢？公匙可以随意分发，谁都可以持有，如果你用私匙加密，任何持有对应公匙的人都可以解密，这样做和没加密一样，没什么意义。因此，我们需要用公匙加密，只有持有私匙的那个人才能解密。私匙之所以称为私匙，一定会私密保存，不会向其他人泄漏。同时，用私匙加密虽然没有意义，但如果别人用公匙解开了私匙加密的信息，就能够证明信息是由私匙持有者发出的，验证了信息发送者的身份，这就是数字签名。
+怎么理解呢？公钥可以随意分发，谁都可以持有，如果你用私钥加密，任何持有对应公钥的人都可以解密，这样做和没加密一样，没什么意义。因此，我们需要用公钥加密，只有持有私钥的那个人才能解密。私钥之所以称为私钥，一定会私密保存，不会向其他人泄漏。同时，用私钥加密虽然没有意义，但如果别人用公钥解开了私钥加密的信息，就能够证明信息是由私钥持有者发出的，验证了信息发送者的身份，这就是数字签名。
 
-每个人制作好自己的公匙和私匙，然后把公匙发布出去。两个人如果都有对方的公匙，就可以用对方的公匙给对方发送加密信息，同时附上用私匙加密的信息摘要作为数字签名，证明消息发送者的身份。
+每个人制作好自己的公钥和私钥，然后把公钥发布出去。两个人如果都有对方的公钥，就可以用对方的公钥给对方发送加密信息，同时附上用私钥加密的信息摘要作为数字签名，证明消息发送者的身份。
 
 通过加密防止了窃听风险，通过数字签名防止了冒充风险，数字签名内的消息摘要防止了篡改风险，一起看似很完美。
 
-等等，这里有个很重要的问题被忽略了：如何安全的将公匙发布出去？如果双方希望安全通信，最好当面交换公匙，以免被别人冒充，并且要保护好自己的电脑，避免公匙被别有用心的人替换。现实中不可能这样分发公匙，效率太低，几乎无法大规模实行。于是出现了`CA`(certificate authority)，为公匙做认证。`CA`用自己的私钥，对申请用户的公匙和一些身份信息加密，生成"数字证书"（Digital Certificate）。你现在可以用任何方式将内含公匙的数字证书发布出去，例如有客户发起请求，希望以`HTTPS`的方式访问你的WEB服务，你可以在第一次回复客户的响应中带上数字证书。客户拿到你的数字证书，用`CA`的公匙解开数字证书，安全的获得你的公匙。有了`CA`为你的数字证书背书，客户可以确定你的身份，不是有人在冒充你。
+等等，这里有个很重要的问题被忽略了：如何安全的将公钥发布出去？如果双方希望安全通信，最好当面交换公钥，以免被别人冒充，并且要保护好自己的电脑，避免公钥被别有用心的人替换。现实中不可能这样分发公钥，效率太低，几乎无法大规模实行。于是出现了`CA`(certificate authority)，为公钥做认证。`CA`用自己的私钥，对申请用户的公钥和一些身份信息加密，生成"数字证书"（Digital Certificate）。你现在可以用任何方式将内含公钥的数字证书发布出去，例如有客户发起请求，希望以`HTTPS`的方式访问你的WEB服务，你可以在第一次回复客户的响应中带上数字证书。客户拿到你的数字证书，用`CA`的公钥解开数字证书，安全的获得你的公钥。有了`CA`为你的数字证书背书，客户可以确定你的身份，不是有人在冒充你。
 
-那么`CA`的公匙如何安全的分发呢？首先，证书的签发是“链”式结构，给你签发证书的`CA`，它的证书可能还是由上一级`CA`机构签发的，这样一直往上追溯，最终会到某个“根证书”。如果“根证书”是被我们信任的，那么整条“链”上的证书都可信。
+那么`CA`的公钥如何安全的分发呢？首先，证书的签发是“链”式结构，给你签发证书的`CA`，它的证书可能还是由上一级`CA`机构签发的，这样一直往上追溯，最终会到某个“根证书”。如果“根证书”是被我们信任的，那么整条“链”上的证书都可信。
 
 ![certificates in a chain](./media/ca-chain.png)
 
@@ -41,7 +41,7 @@
 
 根证书是通过预装的方式完成的分发，因此安装来源不明的操作系统有风险，可能潜伏了非法的根证书。一旦被植入了非法的根证书，一整套的安全体系瞬间土崩瓦解。同时，不能随意向系统中添加可信任的根证书，你很难验证根证书的真伪，它已经是root，没人能为它做背书了。12306网站早期的根证书就不在操作系统的“受信任根证书”列表中，需要用户手工安装，在网上[引起轩然大波](https://www.williamlong.info/archives/3461.html)。最终12306在17年底的时候换成了Digicert的证书。
 
-简单总结一下基于非对称加密算法的公匙/私匙体系，**公匙用来加密**，**私匙用来签名**，**引入`CA`保证公匙的安全分发**。你可以找`CA`签发数字证书，那么你的客户就可以根据本地“受信任的根证书”验证你的数字证书，从而确认你的身份，然后用证书内包含的公匙给你发加密的信息。同样，你也可以要求对方的数字证书，以便确认对方的身份，并给他回加密的信息。
+简单总结一下基于非对称加密算法的公钥/私钥体系，**公钥用来加密**，**私钥用来签名**，**引入`CA`保证公钥的安全分发**。你可以找`CA`签发数字证书，那么你的客户就可以根据本地“受信任的根证书”验证你的数字证书，从而确认你的身份，然后用证书内包含的公钥给你发加密的信息。同样，你也可以要求对方的数字证书，以便确认对方的身份，并给他回加密的信息。
 
 理解了数字证书的基本原理，我们再看看`Kubernetes`中如何使用客户端证书进行身份验证。
 
@@ -49,7 +49,7 @@
 
 `Kubernetes`各组件之间的通信都是基于`TLS`，实现服务的加密访问，同时支持基于证书的双向认证。
 
-我们在搭建私有`Kubernetes`集群时，一般是自建`root CA`，因为参与认证的所有集群节点，包括远程访问集群的客户端桌面都完全由自己控制，我们可以安全的将根证书分发到所有节点。有了`CA`，我们再用`CA`的私匙/公匙为各个组件签发所需的证书。
+我们在搭建私有`Kubernetes`集群时，一般是自建`root CA`，因为参与认证的所有集群节点，包括远程访问集群的客户端桌面都完全由自己控制，我们可以安全的将根证书分发到所有节点。有了`CA`，我们再用`CA`的私钥/公钥为各个组件签发所需的证书。
 
 `CA`的创建，以及一系列客户端、服务端证书的签发，实际上是建立了`Kubernetes`集群的[PKI(Public key infrastructure)](https://en.wikipedia.org/wiki/Public_key_infrastructure)。
 
@@ -75,9 +75,9 @@
 * `etcd` 相关功能
   * `etcd` 集群中节点互相通信使用的客户端证书
   * 如果`etcd`是以Pod方式运行，针对`etcd`的 Liveness 需要的客户端证书
-* `Service accounts` 私匙/公匙对，用于生成`Service accounts`身份验证的 `JWT Tokens`
+* `Service accounts` 私钥/公钥对，用于生成`Service accounts`身份验证的 `JWT Tokens`
 
-最后一个不是证书，不过也在`Kubernetes PKI`的管理范围。关于`Service accounts` 私匙/公匙对的作用，后面会讲到。
+最后一个不是证书，不过也在`Kubernetes PKI`的管理范围。关于`Service accounts` 私钥/公钥对的作用，后面会讲到。
 
 理论上`CA`根证书可以只使用一个，不过为了安全和方便管理，官方强调在不同的上下文最好使用不同的`CA`：
 
@@ -85,7 +85,7 @@
 
 可以看出，`API server`是核心组件，其他组件、包括admin用户对它的访问都需要`TLS`双向认证，所以会有`API server`的服务端证书和各个组件的客户端证书。`API server`作为客户端需要访问`etcd`、`kubelet`和`aggregated API server`，所以也会有相应的服务端、客户端证书。
 
-当我们使用`kubeadm`安装`Kubernetes`时，`kubeadm`会为我们生成上述的一系列私匙和证书，放在`/etc/kubernetes/`目录下：
+当我们使用`kubeadm`安装`Kubernetes`时，`kubeadm`会为我们生成上述的一系列私钥和证书，放在`/etc/kubernetes/`目录下：
 
 ```
 # tree --dirsfirst /etc/kubernetes/
@@ -98,7 +98,7 @@
 ├── pki                               
 │   ├── etcd                          
 │   │   ├── ca.crt                    etcd 集群CA证书
-│   │   ├── ca.key                    etcd 集群CA私匙
+│   │   ├── ca.key                    etcd 集群CA私钥
 │   │   ├── healthcheck-client.crt    Liveness 健康检查使用的客户端证书
 │   │   ├── healthcheck-client.key
 │   │   ├── peer.crt                  etcd节点间通信使用的客户端证书
@@ -112,20 +112,20 @@
 │   ├── apiserver-kubelet-client.crt  API server -> kubelet
 │   ├── apiserver-kubelet-client.key
 │   ├── ca.crt                        CA证书
-│   ├── ca.key                        CA私匙
+│   ├── ca.key                        CA私钥
 │   ├── front-proxy-ca.crt            aggregation 相关功能CA证书
-│   ├── front-proxy-ca.key            aggregation 相关功能CA私匙
+│   ├── front-proxy-ca.key            aggregation 相关功能CA私钥
 │   ├── front-proxy-client.crt        API server -> aggregated API server
 │   ├── front-proxy-client.key
-│   ├── sa.key                        Service accounts 私匙
-│   └── sa.pub                        Service accounts 公匙
+│   ├── sa.key                        Service accounts 私钥
+│   └── sa.pub                        Service accounts 公钥
 ├── admin.conf                        admin              -> API server 
 ├── controller-manager.conf           controller-manager -> API server 
 ├── kubelet.conf                      kubelet　　　　　　  -> API server 
 └── scheduler.conf                    kube-scheduler     -> API server 
 ```
 
-注意，最后四个`*.conf`是[kubeconfig file](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/)，内容包含了集群、用户、namespace等信息，还有用来认证的CA证书、客户端证书和私匙。例如`admin.conf`就是`kubectl`访问集群用到的`kubeconfig file`，缺省情况下`kubectl`会使用`$HOME/.kube/config`，你也可以通过`KUBECONFIG`环境变量，或`kubectl` 的 `--kubeconfig` 参数进行设置。
+注意，最后四个`*.conf`是[kubeconfig file](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/)，内容包含了集群、用户、namespace等信息，还有用来认证的CA证书、客户端证书和私钥。例如`admin.conf`就是`kubectl`访问集群用到的`kubeconfig file`，缺省情况下`kubectl`会使用`$HOME/.kube/config`，你也可以通过`KUBECONFIG`环境变量，或`kubectl` 的 `--kubeconfig` 参数进行设置。
 
 `kubelet`运行在每个工作节点，无法提前预知 `node` 的 `IP` 信息，所以 `kubelet` 一般不会明确指定服务端证书, 而是只指定 `CA` 根证书, 让 `kubelet` 根据本机信息自动生成服务端证书，保存到配置参数指定的[--cert-dir](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/)目录中。`cert-dir`的缺省值是`/var/lib/kubelet/pki`。
 
@@ -136,7 +136,7 @@
 ├── kubelet-client-2019-04-28-10-48-13.pem
 ├── kubelet-client-current.pem -> /var/lib/kubelet/pki/kubelet-client-2019-04-28-10-48-13.pem
 ├── kubelet.crt   kubelet服务端证书
-└── kubelet.key   kubelet服务端私匙
+└── kubelet.key   kubelet服务端私钥
 ```
 
 另外，`API server`有很多认证相关的[启动参数](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/#options)，参数名称让人容易混淆，有人还专门提了[issue](https://github.com/kubernetes/kubernetes/issues/54665)，[这个回答](https://github.com/kubernetes/kubernetes/issues/54665#issuecomment-340960398)根据用途对这些参数进行了分类，说明的非常清晰。
@@ -177,7 +177,7 @@ users:
 
 * `certificate-authority-data` ：CA证书
 * `client-certificate-data` ：客户端证书
-* `client-key-data`： 客户端私匙
+* `client-key-data`： 客户端私钥
 
 客户端证书是以`base64`编码的方式保存在`client-certificate-data`字段中，我们将证书提取出来：
 
@@ -350,7 +350,7 @@ type: kubernetes.io/service-account-token
 * `namespace`： `secret`所在`namespace`，使用了`base64`编码
 * `token`：`JWT Tokens`
  
-`JWT Tokens` 是 `controller-manager` 用 `service account`私匙`sa.key`签发的，其中包含了用户的身份信息，`API Server`可以用`sa.pub`验证`token`，拿到用户身份信息，从而完成身份验证。
+`JWT Tokens` 是 `controller-manager` 用 `service account`私钥`sa.key`签发的，其中包含了用户的身份信息，`API Server`可以用`sa.pub`验证`token`，拿到用户身份信息，从而完成身份验证。
 
 如果是使用`kubeadm`安装的`Kubernetes`，我们可以在`/etc/kubernetes/manifests/`目录中的配置文件确认`sa.key`和`sa.pub`的作用：
 
@@ -376,7 +376,7 @@ spec:
 ...
 ```
 
-`controller-manager`用私匙`sa.key`签名，`API Server`用公匙`sa.pub`验签。
+`controller-manager`用私钥`sa.key`签名，`API Server`用公钥`sa.pub`验签。
 
 运行在`Pod`中的进程在向`API server`发起`HTTP`请求时，`HTTP header`中会携带`token`，`API server`从`header`中拿到`token`，进行身份验证：
 
@@ -430,7 +430,7 @@ PKCSSHA256(
   secret)
 ```
 
-`controller-manager`用`sa.key`签名，`API Server`用公匙`sa.pub`验签，进行身份验证。
+`controller-manager`用`sa.key`签名，`API Server`用公钥`sa.pub`验签，进行身份验证。
 
 如果先深入了解`JWT(JSON Web Token)`，建议阅读这篇文档[<JWT: The Complete Guide to JSON Web Tokens>](https://blog.angular-university.io/angular-jwt/)
 
