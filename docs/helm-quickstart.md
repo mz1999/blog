@@ -69,6 +69,28 @@ tiller-deploy-7fbf5fc745-lxzxl         1/1     Running   0          179m
 
 ## Quickstart
 
+* 增加`Chart Repository`（可选）
+
+查看helm的`Chart Repository`：
+
+```
+$ helm repo list
+
+NAME     	URL
+stable   	https://kubernetes-charts.storage.googleapis.com
+local    	http://127.0.0.1:8879/charts
+```
+
+如果你所处的网络环境无法访问缺省的`Chart Repository`，可以更换为其他repo，例如微软提供的 helm 仓库的镜像：
+
+```
+$ helm repo add stable http://mirror.azure.cn/kubernetes/charts/
+"stable" has been added to your repositories
+
+$ helm repo add incubator http://mirror.azure.cn/kubernetes/charts-incubator/
+"incubator" has been added to your repositories
+```
+
 * 所有可用`chart`列表：
 
 ```
