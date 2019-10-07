@@ -5,7 +5,8 @@
 * [Kubernetes 工作原理概述](./docs/kubernetes-overview.md)
 * [Helm的安装和使用](./docs/helm-quickstart.md)
 * [在Ubuntu上安装Minikube](./docs/minikube.md)
-* [使用kubectl管理多集群](./docs/kubectl-multiple-clusters.md)
+* [使用kubectl管理多集群](./docs/kubectl-multiple-clusters.md) 
+* [自己动手将谷歌k8s镜像同步到阿里云](./docs/sync-docker-repo.md)
 
 ## Docker容器
 * [容器技术创新漫谈](./docs/container-innovation.md)
