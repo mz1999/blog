@@ -85,6 +85,7 @@ Connection closed by foreign host.
   * 持久连接
     * 除非明确告知，默认使用持久连接
   * 分块编码传输
+  * 请求管道，支持并行请求处理（缺乏支持）
   * 增强的缓存机制
 
 ---
@@ -164,3 +165,41 @@ Connection closed by foreign host.
   * 主要目标：改进传输性能，低延迟和高吞吐量
   * 保持原有的高层协议语义不变
 * 根据[报告](https://w3techs.com/technologies/details/ce-http2/all/all)，截止2019年10月，全球已经有 **41.1%** 的网站开启了`HTTP/2`
+
+---
+### HTTP/1.1 持久连接
+![tcp-connection1 w:850](./media/http2/tcp-connection1.png)
+
+---
+### HTTP/1.1 持久连接
+![tcp-connection1 w:850](./media/http2/tcp-connection2.png)
+
+---
+### HTTP/1.1 持久连接
+* 非持久`HTTP`连接的固定时间成本
+  * 至少两次网络往返： 握手、请求和响应
+* 服务处理速度越快，固定延迟的影响就越大
+* 持久连接避免`TCP`连接时的三次握手，消除`TCP`的慢启动
+
+---
+### HTTP/1.1 管道
+* 多次请求必须满足**先进先出**(FIFO)的顺序
+
+![keep-alive w:600](./media/http2/http-keep-alive.png)
+
+---
+### HTTP/1.1 管道
+* 尽早发送请求，不被每次响应阻塞
+
+![keep-alive w:750](./media/http2/http-pipeline.png)
+
+---
+### HTTP/1.1 管道
+
+* `HTTP/1.1`的局限性
+  * 只能严格串行地返回响应，不允许一个连接上的多个响应交错到达
+* 管道的问题
+  * 并行处理请求时，服务器必须缓冲管道中的响应，占用服务器资源
+  * 由于失败可能导致重复处理，非幂等的方法不能pipeline化
+  * 由于中间代理的兼容性，可能会破坏管道
+* 管道的应用非常有限
