@@ -164,7 +164,7 @@ Connection closed by foreign host.
 * 2015年正式发布`HTTP/2`
   * 主要目标：改进传输性能，低延迟和高吞吐量
   * 保持原有的高层协议语义不变
-* 根据[报告](https://w3techs.com/technologies/details/ce-http2/all/all)，截止2019年10月，全球已经有 **41.1%** 的网站开启了`HTTP/2`
+* 根据[W3Techs的报告](https://w3techs.com/technologies/details/ce-http2/all/all)，截止2019年10月，全球已经有 **41.3%** 的网站开启了`HTTP/2`
 
 ---
 ### HTTP/1.1 持久连接
@@ -237,6 +237,7 @@ Connection closed by foreign host.
 
 ---
 ### `HTTP/2` 的目标
+* 以Google的`SPDY`协议为基础
 * 性能优化
   * 支持请求与响应的多路复用
   * 支持请求优先级和流量控制
@@ -253,7 +254,7 @@ Connection closed by foreign host.
 ![binary-framing-layer w:800](./media/http2/binary-framing-layer.png)
 
 ---
-### `HTTP/2` 二进制分帧层
+### `HTTP/2` 的核心概念
 * 流(Stream)
   * 已建立的连接上的双向字节流
   * 该字节流可以携带一个或多个消息
@@ -264,12 +265,12 @@ Connection closed by foreign host.
   * 每个帧包含帧首部，标识出当前帧所属的流
 
 ---
-### `HTTP/2` 二进制分帧层
+### `HTTP/2` 的核心概念
 
 ![stream-message-frame w:750](./media/http2/stream-message-frame.png)
 
 ---
-### `HTTP/2` 二进制分帧层
+### `HTTP/2` 的核心概念
 * 所有`HTTP/2`通信都在一个TCP连接上完成
 * `流`是连接中的一个虚拟信道，可以承载双向的消息
 * 一个连接可以承载任意数量的`流`，每个`流`都有一个唯一的整数标识符(1、2...N)
@@ -278,7 +279,7 @@ Connection closed by foreign host.
 
 ---
 ### `HTTP/2` 帧格式
-![frame format w:800](./media/http2/frame-format.png)
+![frame format](./media/http2/frame-format.png)
 
 * 详细说明请参考[HTTP/2规范](https://tools.ietf.org/html/rfc7540)
 
@@ -294,7 +295,7 @@ Connection closed by foreign host.
 * `HTTP/2`允许每个流关联一个31bit的优先值
   * `0` 最高优先级
   * `2^31 -1` 最低优先级
-* 浏览器会基于资源的类型、在页面中的位置排定请求的优先次序(HTML文档本身，css，js，其他资源)
+* 浏览器会基于资源的类型、在页面中的位置等因素，决定请求的优先次序
 * 服务器可以根据流的优先级，控制资源分配，优先将高优先级的帧发送给客户端
 * `HTTP/2`没有规定具体的优先级算法
 
@@ -317,7 +318,7 @@ Connection closed by foreign host.
 ### `HTTP header`压缩
 * `HTTP/2`使用[HPACK](https://tools.ietf.org/html/rfc7541)压缩格式压缩请求/响应头
   * 通过静态霍夫曼码对发送的`header`字段进行编码，减小了它们的传输大小
-  * 客户端和服务器使用`索引表`来维护和更新之前发送的`header`字段。对于相同的数据，不再通过每次请求和响应发送
+  * 客户端和服务器使用`索引表`来维护和更新`header`字段。对于相同的数据，不再重复发送
 
 ---
 ### `HTTP header`压缩
@@ -336,19 +337,23 @@ Connection closed by foreign host.
   * 通过安全连接`TLS`和`ALPN`进行协商
   * 基于`TCP`连接的协商机制
 
-
 ---
 ### `HTTP/2`的升级与发现
 * `HTTP/2`标准不要求必须基于`TLS`，但浏览器要求必须基于`TLS`
   * Web上存在大量的代理和中间设备：缓存服务器、安全网关、加速器等等
   * 如果任何中间设备不支持，连接都不会成功
   * 建立`TLS`信道，端到端加密传输，绕过中间代理，实现可靠的部署
-  * 新协议一般要依赖于建立`TLS`信道，例如`WebSocket`、`SPDY`
+  * 新协议一般都要依赖于建立`TLS`信道，例如`WebSocket`、`SPDY`
+
+---
+### `h2`和`h2c`协议协商机制
 * 基于`TLS`运行的`HTTP/2`被称为`h2`
 * 直接在`TCP`之上运行的`HTTP/2`被称为`h2c`
 
+![h2-h2c width:800](./media/http2/h2-h2c.png)
+
 --- 
-### 直接在`TCP`之上运行的`HTTP/2`
+### `h2c`演示环境
 * 客户端测试工具 `curl` (> 7.46.0)
 * 服务器端 `Tomcat 9.x`
 
@@ -362,9 +367,8 @@ Connection closed by foreign host.
 ```
 
 ---
-### `h2c`协商协议升级
+### `h2c`协议升级
 * `curl http://localhost:8080 --http2 -v`
-* `Request` & `Response`
 
 ```
 > GET / HTTP/1.1
@@ -381,7 +385,11 @@ Connection closed by foreign host.
 ```
 
 ---
-### `HTTP/2`连接过程
+### `HTTP/2`连接建立
+![start-http2-connection width:550](./media/http2/start-http2-connection.png)
+
+---
+### `HTTP/2`连接建立
 * Magic帧
   * ASCII 编码，12字节
   * 何时发送?
@@ -389,25 +397,25 @@ Connection closed by foreign host.
     * TLS 握手成功后
   * Preface 内容
 
-![magic-frame w:700](./media/http2/magic-frame.png)
+![magic-frame](./media/http2/magic-frame.png)
 
 ---
-### `HTTP/2`连接过程
+### `HTTP/2`连接建立
 * 交换`settings`帧(client -> server)
 
-![setting-frame w:800](./media/http2/setting-frame1.png)
+![setting-frame](./media/http2/setting-frame1.png)
 
 ---
-### `HTTP/2`连接过程
+### `HTTP/2`连接建立
 * 交换`settings`帧(server -> client)
 
-![setting-frame w:800](./media/http2/setting-frame2.png)
+![setting-frame](./media/http2/setting-frame2.png)
 
 ---
-### `HTTP/2`连接过程
+### `HTTP/2`连接建立
 * `settings` ACK 帧 (client <-> server)
 
-![setting-frame w:800](./media/http2/setting-frame3.png)
+![setting-frame](./media/http2/setting-frame3.png)
 
 ---
 ### `TLS` 通讯过程
@@ -418,15 +426,21 @@ Connection closed by foreign host.
 * 加密通讯
 
 ---
-### Application-Layer Protocol Negotiation Extension
+### Application-Layer Protocol Negotiation
 * 基于`TLS`运行的`HTTP/2`使用`ALPN`扩展做协议协商
+  * 客户端在`ClientHello`消息中增加`ProtocolNameList`字段，包含自己支持的应用协议
+  * 服务器检查`ProtocolNameList`字段，在`ServerHello`消息中以`ProtocolName`字段返回选中的协议
+
 * 在`TLS`握手的同时协商应用协议，省掉了`HTTP`的`Upgrade`机制所需的额外往返时间
-* 客户端在`ClientHello`消息中增加`ProtocolNameList`字段，包含自己支持的应用协议
-* 服务器检查`ProtocolNameList`字段，在`ServerHello`消息中以`ProtocolName`字段返回选中的协议
+
+---
+### ALPN
+
+![alpn width:1200](./media/http2/alpn.png)
 
 ---
 ### `h2`演示环境
-* 客户端：`Chrome`浏览器
+* 客户端：浏览器
 * 服务器端：`Tomcat 9.x`
   * `Tomcat`提供了三种不同的`TLS`实现
     * Java运行时提供的`JSSE`实现
@@ -437,7 +451,7 @@ Connection closed by foreign host.
 ### `Tomcat`三种`TLS`实现的对比
 * JSSE
   * 非常慢
-  * JDK8不支持ALPN。[ALPN](https://tools.ietf.org/html/rfc7301)是因为`HTTP/2`才在2014年出现
+  * [ALPN](https://tools.ietf.org/html/rfc7301)是因为`HTTP/2`才在2014年出现，JDK8不支持`ALPN`
 * 使用`OpenSSL`的`JSSE`
   * 只使用了`OpenSSL`的本地代码，没有使用native socket
   * 可以配合 NIO 和 NIO2
@@ -465,8 +479,8 @@ Connection closed by foreign host.
       "org.apache.tomcat.util.net.jsse.JSSEImplementation"
   scheme="https" secure="true" SSLEnabled="true"
   keystoreFile="${user.home}/.keystore" keystorePass="changeit"
-	clientAuth="false" sslProtocol="TLS">
-	  <UpgradeProtocol 
+  clientAuth="false" sslProtocol="TLS">
+  <UpgradeProtocol 
         className="org.apache.coyote.http2.Http2Protocol" />
 </Connector>
 ```
@@ -474,7 +488,7 @@ Connection closed by foreign host.
 ---
 ### 使用`JSSE`
 
-* `JDK8`
+* `JDK8`不支持`ALPN`
 ```
 严重 [main]
 org.apache.coyote.http11.AbstractHttp11Protocol.configureUpgradeProtocol 
@@ -495,14 +509,80 @@ support negotiation to [h2] via ALPN
 ---
 ### 使用`OpenSSL`
 * 安装`tomcat-native`
-  * macOS `brew install tomcat-native`
+  * `brew install tomcat-native`
 * 配置`$CATALINA_HOME/bin/setenv.sh`
 ```
 CATALINA_OPTS="$CATALINA_OPTS -Djava.library.path=/usr/local/opt/tomcat-native/lib"
 ```
+* 配置server.xml
+```
+<Connector
+    protocol="org.apache.coyote.http11.Http11NioProtocol"
+    sslImplementationName=
+        "org.apache.tomcat.util.net.openssl.OpenSSLImplementation"
+    ... >
+</Connector>
+```
+
 
 ---
-### `ALPN`协商过程
+### 使用`OpenSSL`
+* `JDK8` & `JDK11`
+
+```
+信息 [main] 
+org.apache.coyote.http11.AbstractHttp11Protocol.configureUpgradeProtocol 
+The ["https-openssl-nio-8443"] connector has been configured to 
+support negotiation to [h2] via ALPN
+
+...
+
+信息 [main] 
+org.apache.coyote.AbstractProtocol.start 开始协议处理句柄
+["https-openssl-nio-8443"]
+```
+
+---
+### `ALPN`协议协商
 * ClientHello
 
 ![client-hello](./media/http2/client-hello.png)
+
+---
+### `ALPN`协议协商
+![bg right width:700](./media/http2/server-hello.png)
+
+* ServerHello
+
+---
+### Chrome开发者工具
+![chrome width:1000](./media/http2/chrome.png)
+
+---
+### HTTP/2的问题
+* `HTTP/2`消除了`HTTP`协议的队首阻塞现象，但`TCP`层面上仍然存在队首阻塞
+* `HTTP/2`多请求复用一个`TCP`连接，丢包可能会block住所有的`HTTP`请求
+![head-of-line width:1000](./media/http2/head-of-line.png)
+
+---
+### HTTP/2的问题
+* `TCP`及`TCP+TLS`建立连接需要多次round trips
+
+![tcp-tls width:800](./media/http2/tcp-tls.png)
+
+---
+### QUIC
+* **Q**uick **U**DP **I**nternet **C**onnections
+* 由Goolge开发，并已经在Google部署使用
+
+![quic width:900](./media/http2/quic.png)
+
+---
+### QUIC
+[QUIC: next generation multiplexed transport over UDP](https://www.youtube.com/watch?v=hQZ-0mXFmk8)
+
+![google-live width:1000](./media/http2/google-live.png)
+
+---
+![bg right](./media/http2/end.jpg)
+# Thank You!
