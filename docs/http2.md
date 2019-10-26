@@ -584,5 +584,5 @@ org.apache.coyote.AbstractProtocol.start 开始协议处理句柄
 ![google-live width:1000](./media/http2/google-live.png)
 
 ---
-![bg right](./media/http2/end.jpg)
+![bg right](./media/http2/ending.jpg)
 # Thank You!
