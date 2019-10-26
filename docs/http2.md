@@ -205,7 +205,15 @@ Connection closed by foreign host.
 * 管道的应用非常有限
 
 ---
-### 应用针对`HTTP/1.1`的连接优化
+### `HTTP/1.1` 的协议开销
+* 每个`HTTP`请求都会携带500~800字节的`header`
+* 如果使用了`cookie`，每个`HTTP`请求会增加几千字节的协议开销
+* `HTTP header`以纯文本形式发送，不会进行任何压缩
+* 某些时候`HTTP header`开销会超过实际传输的数据一个数量级
+  * 访问`RESTful API`返回`JSON`
+
+---
+### 为了解决`HTTP/1.1`性能问题做过的努力
 * `HTTP/1.1`不支持多路复用
   * 浏览器支持每个主机打开多个连接（例如Chrome是6个）
   * 浏览器连接限制针对的是主机名，不是`IP`地址
@@ -216,15 +224,16 @@ Connection closed by foreign host.
   * 避免不了TCP慢启动
 
 ---
-### 应用针对`HTTP/1.1`的连接优化
+### 为了解决`HTTP/1.1`性能问题做过的努力
 ![connection-view w:800](./media/http2/connection-view.png)
 
 ---
-### `HTTP/1.1` 的协议开销
-* 每个`HTTP`请求都会携带500~800字节的`header`
-* 如果使用了`cookie`，每个`HTTP`请求会增加几千字节的协议开销
-* `HTTP header`以纯文本形式发送，不会进行任何压缩
-* 某些时候`HTTP header`开销会超过实际传输的数据一个数量级
+### 为了解决`HTTP/1.1`性能问题做过的努力
+* 把多个`JavaScript`或`CSS`组合为一个文件
+* 把多张图片组合为一个更大的复合的图片
+* Inlining内联，将图片嵌入到`CSS`或者`HTML`文件中，减少网络请求次数
+
+*增加应用的复杂度，导致缓存、更新等问题，只是权宜之计*
 
 ---
 ### `HTTP/2` 的目标
@@ -268,6 +277,12 @@ Connection closed by foreign host.
 * `消息`由一或多个`帧`组成，这些帧可以交错发送，然后根据每个帧首部的流标识符重新组装
 
 ---
+### `HTTP/2` 帧格式
+![frame format w:800](./media/http2/frame-format.png)
+
+* 详细说明请参考[HTTP/2规范](https://tools.ietf.org/html/rfc7540)
+
+---
 ### `HTTP/2`请求与响应的多路复用
 * `HTTP/1.x`中，如果客户端想发送多个并行的请求，那么必须使用多个`TCP`连接
 * `HTTP/2`中，客户端和服务器把`HTTP`消息分解为互不依赖的帧，然后交错发送，最后在另一端把它们重新组合起来
@@ -307,3 +322,187 @@ Connection closed by foreign host.
 ---
 ### `HTTP header`压缩
 ![http header w:700](./media/http2/http-header.png)
+
+---
+### `HTTP/2` vs `HTTP/1.1`
+* https://http2.akamai.com/demo
+![http2 vs http1 w:700](./media/http2/http2-vs-http1.gif)
+
+---
+### `HTTP/2`的升级与发现
+* `HTTP/1.x`还将长期存在，客户端和服务器必须同时支持`1.x`和`2.0`
+* 客户端和服务器在开始交换数据前，必须发现和协商使用哪个版本的协议进行通信
+* `HTTP/2`定义了两种协商机制
+  * 通过安全连接`TLS`和`ALPN`进行协商
+  * 基于`TCP`连接的协商机制
+
+
+---
+### `HTTP/2`的升级与发现
+* `HTTP/2`标准不要求必须基于`TLS`，但浏览器要求必须基于`TLS`
+  * Web上存在大量的代理和中间设备：缓存服务器、安全网关、加速器等等
+  * 如果任何中间设备不支持，连接都不会成功
+  * 建立`TLS`信道，端到端加密传输，绕过中间代理，实现可靠的部署
+  * 新协议一般要依赖于建立`TLS`信道，例如`WebSocket`、`SPDY`
+* 基于`TLS`运行的`HTTP/2`被称为`h2`
+* 直接在`TCP`之上运行的`HTTP/2`被称为`h2c`
+
+--- 
+### 直接在`TCP`之上运行的`HTTP/2`
+* 客户端测试工具 `curl` (> 7.46.0)
+* 服务器端 `Tomcat 9.x`
+
+```
+<Connector port="8080" protocol="HTTP/1.1"
+           connectionTimeout="20000"
+           redirectPort="8443" >
+    <UpgradeProtocol 
+            className="org.apache.coyote.http2.Http2Protocol"/>
+</Connector>
+```
+
+---
+### `h2c`协商协议升级
+* `curl http://localhost:8080 --http2 -v`
+* `Request` & `Response`
+
+```
+> GET / HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.64.1
+> Accept: */*
+> Connection: Upgrade, HTTP2-Settings
+> Upgrade: h2c
+> HTTP2-Settings: AAMAAABkAARAAAAAAAIAAAAA
+
+< HTTP/1.1 101 
+< Connection: Upgrade
+< Upgrade: h2c
+```
+
+---
+### `HTTP/2`连接过程
+* Magic帧
+  * ASCII 编码，12字节
+  * 何时发送?
+    * 接收到服务器发送来的 101 Switching Protocols后
+    * TLS 握手成功后
+  * Preface 内容
+
+![magic-frame w:700](./media/http2/magic-frame.png)
+
+---
+### `HTTP/2`连接过程
+* 交换`settings`帧(client -> server)
+
+![setting-frame w:800](./media/http2/setting-frame1.png)
+
+---
+### `HTTP/2`连接过程
+* 交换`settings`帧(server -> client)
+
+![setting-frame w:800](./media/http2/setting-frame2.png)
+
+---
+### `HTTP/2`连接过程
+* `settings` ACK 帧 (client <-> server)
+
+![setting-frame w:800](./media/http2/setting-frame3.png)
+
+---
+### `TLS` 通讯过程
+![bg right w:650](./media/http2/tls-handshake.png)
+* 验证身份
+* 达成安全套件共识
+* 传递密钥
+* 加密通讯
+
+---
+### Application-Layer Protocol Negotiation Extension
+* 基于`TLS`运行的`HTTP/2`使用`ALPN`扩展做协议协商
+* 在`TLS`握手的同时协商应用协议，省掉了`HTTP`的`Upgrade`机制所需的额外往返时间
+* 客户端在`ClientHello`消息中增加`ProtocolNameList`字段，包含自己支持的应用协议
+* 服务器检查`ProtocolNameList`字段，在`ServerHello`消息中以`ProtocolName`字段返回选中的协议
+
+---
+### `h2`演示环境
+* 客户端：`Chrome`浏览器
+* 服务器端：`Tomcat 9.x`
+  * `Tomcat`提供了三种不同的`TLS`实现
+    * Java运行时提供的`JSSE`实现
+    * 使用`OpenSSL`的`JSSE`实现
+    * `APR`实现，默认情况下使用`OpenSSL`引擎
+
+---
+### `Tomcat`三种`TLS`实现的对比
+* JSSE
+  * 非常慢
+  * JDK8不支持ALPN。[ALPN](https://tools.ietf.org/html/rfc7301)是因为`HTTP/2`才在2014年出现
+* 使用`OpenSSL`的`JSSE`
+  * 只使用了`OpenSSL`的本地代码，没有使用native socket
+  * 可以配合 NIO 和 NIO2
+* `APR`
+  * 大量的native code
+  * 同样使用了`OpenSSL`
+
+---
+### `Tomcat`三种`TLS`实现的对比
+* `OpenSSL`性能比`JSSE`好很多；不再需要`APR`
+
+![jsse-openssl](./media/http2/jsse-openssl.png)
+
+---
+### 使用`JSSE`
+* 生成private key和自签名证书
+  * `keytool -genkey -alias tomcat -keyalg RSA`
+* 配置`server.xml`
+
+```
+<Connector
+  protocol="org.apache.coyote.http11.Http11NioProtocol"
+  port="8443" maxThreads="200"
+  sslImplementationName=
+      "org.apache.tomcat.util.net.jsse.JSSEImplementation"
+  scheme="https" secure="true" SSLEnabled="true"
+  keystoreFile="${user.home}/.keystore" keystorePass="changeit"
+	clientAuth="false" sslProtocol="TLS">
+	  <UpgradeProtocol 
+        className="org.apache.coyote.http2.Http2Protocol" />
+</Connector>
+```
+
+---
+### 使用`JSSE`
+
+* `JDK8`
+```
+严重 [main]
+org.apache.coyote.http11.AbstractHttp11Protocol.configureUpgradeProtocol 
+The upgrade handler [org.apache.coyote.http2.Http2Protocol] 
+for [h2] only supports upgrade via ALPN but has been configured 
+for the ["https-jsse-nio-8443"] connector that does not support ALPN.
+```
+
+* `JDK11`
+
+```
+信息 [main] 
+org.apache.coyote.http11.AbstractHttp11Protocol.configureUpgradeProtocol 
+The ["https-jsse-nio-8443"] connector has been configured to 
+support negotiation to [h2] via ALPN
+```
+
+---
+### 使用`OpenSSL`
+* 安装`tomcat-native`
+  * macOS `brew install tomcat-native`
+* 配置`$CATALINA_HOME/bin/setenv.sh`
+```
+CATALINA_OPTS="$CATALINA_OPTS -Djava.library.path=/usr/local/opt/tomcat-native/lib"
+```
+
+---
+### `ALPN`协商过程
+* ClientHello
+
+![client-hello](./media/http2/client-hello.png)
