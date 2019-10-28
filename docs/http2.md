@@ -6,9 +6,18 @@ paginate: true
 _paginate: false
 ---
 
-# HTTP/2 简介
+# <!--fit--> HTTP/2 简介
 
-马震
+---
+# Outline
+
+##### <!--fit--> 回顾HTTP的发展简史，理解HTTP在设计上的关键转变，以及每次转变的动机
+
+* HTTP简史
+* HTTP/1.1的主要特性和问题
+* HTTP/2 的核心概念、主要特性
+* HTTP/2 的升级与发现
+* HTTP/2 的问题及展望
 
 ---
 
@@ -161,10 +170,25 @@ Connection closed by foreign host.
 
 ---
 ### HTTP简史
+* Google在2009年发布了实验性协议`SPDY`，主要目标是解决`HTTP/1.1`的性能限制
+* Google工程师在[A 2x Faster Web](https://blog.chromium.org/2009/11/2x-faster-web.html)分享实验结果
+> So far we have only tested SPDY in lab conditions. The initial results are very encouraging: when we download the top 25 websites over simulated home network connections, we see a significant improvement in performance - pages loaded up to 55% faster. 
+* 2012年，`SPDY`得到Chrome、Firefox和Opera的支持
+* HTTP-WG(HTTP Working Group)开始在`SPDY`的基础上制定官方标准
+
+
+---
+### HTTP简史
 * 2015年正式发布`HTTP/2`
   * 主要目标：改进传输性能，低延迟和高吞吐量
   * 保持原有的高层协议语义不变
 * 根据[W3Techs的报告](https://w3techs.com/technologies/details/ce-http2/all/all)，截止2019年10月，全球已经有 **41.3%** 的网站开启了`HTTP/2`
+
+---
+### HTTP简史
+* Google在2012年设计开发了[QUIC协议](https://en.wikipedia.org/wiki/QUIC)，让`HTTP`不再基于`TCP`
+* 2018年底，`HTTP/3`标准发布
+* `HTTP/3`协议业务逻辑变化不大，可以简单理解为 `HTTP/2` + `QUIC`
 
 ---
 ### HTTP/1.1 持久连接
@@ -237,7 +261,6 @@ Connection closed by foreign host.
 
 ---
 ### `HTTP/2` 的目标
-* 以Google的`SPDY`协议为基础
 * 性能优化
   * 支持请求与响应的多路复用
   * 支持请求优先级和流量控制
@@ -282,6 +305,11 @@ Connection closed by foreign host.
 ![frame format](./media/http2/frame-format.png)
 
 * 详细说明请参考[HTTP/2规范](https://tools.ietf.org/html/rfc7540)
+
+---
+### `HTTP/2` 帧类型
+![frame type width:950](./media/http2/frame-type.png)
+
 
 ---
 ### `HTTP/2`请求与响应的多路复用
@@ -582,6 +610,13 @@ org.apache.coyote.AbstractProtocol.start 开始协议处理句柄
 [QUIC: next generation multiplexed transport over UDP](https://www.youtube.com/watch?v=hQZ-0mXFmk8)
 
 ![google-live width:1000](./media/http2/google-live.png)
+
+---
+### 参考资料
+* [High Performance Browser Networking](https://hpbn.co/)
+* [HTTP的前世今生](https://coolshell.cn/articles/19840.html)
+* [HTTP/3 的过去、现在和未来](https://www.infoq.cn/article/x80uOvcRyxVYw3KVusUm)
+* [HTTP/2协议](https://tools.ietf.org/html/rfc7540)
 
 ---
 ![bg right](./media/http2/ending.jpg)
