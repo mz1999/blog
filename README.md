@@ -1,6 +1,3 @@
-# Blog
-
-
 * [HTTP/2 内部分享](./docs/http2.md)
 
 ---
