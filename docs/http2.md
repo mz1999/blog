@@ -169,18 +169,26 @@ Connection closed by foreign host.
 ```
 
 ---
+<style scoped>
+li {
+  font-size: 35px;
+}
+p {
+  font-size: 30px;
+}
+</style>
 ### HTTP简史
 * Google在2009年发布了实验性协议`SPDY`，主要目标是解决`HTTP/1.1`的性能限制
-* Google工程师在[A 2x Faster Web](https://blog.chromium.org/2009/11/2x-faster-web.html)分享实验结果
+* Google工程师在09年11月分享了实验结果 [A 2x Faster Web](https://blog.chromium.org/2009/11/2x-faster-web.html)
 > So far we have only tested SPDY in lab conditions. The initial results are very encouraging: when we download the top 25 websites over simulated home network connections, we see a significant improvement in performance - pages loaded up to 55% faster. 
 * 2012年，`SPDY`得到Chrome、Firefox和Opera的支持
-* HTTP-WG(HTTP Working Group)开始在`SPDY`的基础上制定官方标准
+* `HTTP-WG`(HTTP Working Group)开始在`SPDY`的基础上制定官方标准
 
 
 ---
 ### HTTP简史
 * 2015年正式发布`HTTP/2`
-  * 主要目标：改进传输性能，低延迟和高吞吐量
+  * 主要目标：改进传输性能，降低延迟，提高吞吐量
   * 保持原有的高层协议语义不变
 * 根据[W3Techs的报告](https://w3techs.com/technologies/details/ce-http2/all/all)，截止2019年10月，全球已经有 **41.3%** 的网站开启了`HTTP/2`
 
@@ -218,6 +226,11 @@ Connection closed by foreign host.
 ![keep-alive w:750](./media/http2/http-pipeline.png)
 
 ---
+<style scoped>
+li {
+  font-size: 37px;
+}
+</style>
 ### HTTP/1.1 管道
 
 * `HTTP/1.1`的局限性
@@ -234,28 +247,38 @@ Connection closed by foreign host.
 * 如果使用了`cookie`，每个`HTTP`请求会增加几千字节的协议开销
 * `HTTP header`以纯文本形式发送，不会进行任何压缩
 * 某些时候`HTTP header`开销会超过实际传输的数据一个数量级
-  * 访问`RESTful API`返回`JSON`
+  * 例如访问`RESTful API`时返回`JSON`格式的响应
 
 ---
-### 为了解决`HTTP/1.1`性能问题做过的努力
-* `HTTP/1.1`不支持多路复用
+### `HTTP/1.1`性能优化建议
+* 由于`HTTP/1.1`不支持多路复用
   * 浏览器支持每个主机打开多个连接（例如Chrome是6个）
-  * 浏览器连接限制针对的是主机名，不是`IP`地址
   * 应用使用多域名，将资源分散到多个子域名
+    * 浏览器连接限制针对的是主机名，不是`IP`地址
 * 缺点
   * 消耗客户端和服务器资源
   * 域名分区增加了额外的`DNS`查询
-  * 避免不了TCP慢启动
+  * 避免不了`TCP`的慢启动
 
 ---
-### 为了解决`HTTP/1.1`性能问题做过的努力
+<style scoped>
+li {
+  font-size: 25px;
+}
+h3 {
+  font-size: 40px;
+}
+</style>
+### `HTTP/1.1`性能优化建议
+* 使用多域名分区
 ![connection-view w:800](./media/http2/connection-view.png)
 
 ---
-### 为了解决`HTTP/1.1`性能问题做过的努力
-* 把多个`JavaScript`或`CSS`组合为一个文件
-* 把多张图片组合为一个更大的复合的图片
-* Inlining内联，将图片嵌入到`CSS`或者`HTML`文件中，减少网络请求次数
+### `HTTP/1.1`性能优化建议
+* 减少请求次数
+  * 把多个`JavaScript`或`CSS`组合为一个文件
+  * 把多张图片组合为一个更大的复合的图片
+  * inlining内联，将图片嵌入到`CSS`或者`HTML`文件中，减少网络请求次数
 
 *增加应用的复杂度，导致缓存、更新等问题，只是权宜之计*
 
@@ -297,8 +320,15 @@ Connection closed by foreign host.
 * 所有`HTTP/2`通信都在一个TCP连接上完成
 * `流`是连接中的一个虚拟信道，可以承载双向的消息
 * 一个连接可以承载任意数量的`流`，每个`流`都有一个唯一的整数标识符(1、2...N)
-* `消息`是指逻辑上的`HTTP`消息，比如请求、响应等。每个数据流以消息的形式发送
-* `消息`由一或多个`帧`组成，这些帧可以交错发送，然后根据每个帧首部的流标识符重新组装
+* `消息`是指逻辑上的`HTTP`消息，比如请求、响应等
+* `消息`由一或多个`帧`组成，这些帧可以交错发送，然后根据每个帧首部的**流标识符**重新组装
+
+---
+### `HTTP/2`请求与响应的多路复用
+* `HTTP/1.x`中，如果客户端想发送多个并行的请求，那么必须使用多个`TCP`连接
+* `HTTP/2`中，客户端可以使用多个流发送请求，同时`HTTP`消息被分解为互不依赖的帧，交错传输，最后在另一端重新组装
+
+![http2-connection w:800](./media/http2/http2-connection.png)
 
 ---
 ### `HTTP/2` 帧格式
@@ -307,20 +337,35 @@ Connection closed by foreign host.
 * 详细说明请参考[HTTP/2规范](https://tools.ietf.org/html/rfc7540)
 
 ---
+<style scoped>
+li {
+  font-size: 30px;
+}
+table {
+  font-size: 25px;
+}
+</style>
 ### `HTTP/2` 帧类型
-![frame type width:950](./media/http2/frame-type.png)
+* 客户端通过`HEADERS`帧来发起新的`流`
+* 服务器通过`PUSH_PROMISE`帧来发起推送流
 
+| 帧类型        | 类型编码 | 用途                         |
+| ------------- | -------- | ---------------------------- |
+| DATA          | 0x0      | 传输HTTP消息体               |
+| HEADERS       | 0x1      | 传输HTTP头部                 |
+| PRIORITY      | 0x2      | 指定流的优先级               |
+| RST_STREAM    | 0x3      | 通知流的非正常               |
+| SETTINGS      | 0x4      | 修改连接或者流的配置         |
+| PUSH_PROMISE  | 0x5      | 服务端推送资源时的请求帧     |
+| PING          | 0x6      | 心跳检测，计算`RTT`往返时间  |
+| GOAWAY        | 0x7      | 优雅的终止连接，或者通知错误 |
+| WINDOW_UPDATE | 0x8      | 针对流或者连接，实现流量控制 |
+| CONTINUATION  | 0x9      | 传递较大HTTP头部时的持续帧   |
 
----
-### `HTTP/2`请求与响应的多路复用
-* `HTTP/1.x`中，如果客户端想发送多个并行的请求，那么必须使用多个`TCP`连接
-* `HTTP/2`中，客户端和服务器把`HTTP`消息分解为互不依赖的帧，然后交错发送，最后在另一端把它们重新组合起来
-
-![http2-connection w:800](./media/http2/http2-connection.png)
 
 ---
 ### `HTTP/2` 请求优先级
-* `HTTP/2`允许每个流关联一个31bit的优先值
+* `HTTP/2`允许每个流关联一个31`bit`的优先值
   * `0` 最高优先级
   * `2^31 -1` 最低优先级
 * 浏览器会基于资源的类型、在页面中的位置等因素，决定请求的优先次序
@@ -335,9 +380,15 @@ Connection closed by foreign host.
 * `HTTP/2`流量控制和`TCP`流量控制的机制相同，但`TCP`流量控制不能对同一个连接内的多个`流`实施差异化策略
 
 ---
+<style scoped>
+li {
+  font-size: 33px;
+}
+</style>
 ### `HTTP/2` 服务器端推送
 * 服务器可以对一个客户端请求发送多个响应
-* 服务器只能借着对请求的响应推送资源，不能随意发起推送流
+* 服务器通过发送`PUSH_PROMISE`帧来发起推送流
+* 客户端可以使用`HTTP header`向服务器发送信号，列出它希望推送的资源
 * 服务器可以智能分析客户端的需求，自动推送关键资源
 
 ![server-push w:800](./media/http2/server-push.png)
@@ -472,23 +523,37 @@ Connection closed by foreign host.
 * 服务器端：`Tomcat 9.x`
   * `Tomcat`提供了三种不同的`TLS`实现
     * Java运行时提供的`JSSE`实现
-    * 使用`OpenSSL`的`JSSE`实现
+    * 使用了`OpenSSL`的`JSSE`实现
     * `APR`实现，默认情况下使用`OpenSSL`引擎
 
 ---
-### `Tomcat`三种`TLS`实现的对比
+<style scoped>
+li {
+  font-size: 35px;
+}
+</style>
+### `Tomcat`三种`TLS`实现
 * JSSE
   * 非常慢
   * [ALPN](https://tools.ietf.org/html/rfc7301)是因为`HTTP/2`才在2014年出现，JDK8不支持`ALPN`
-* 使用`OpenSSL`的`JSSE`
-  * 只使用了`OpenSSL`的本地代码，没有使用native socket
+* `OpenSSL`实现
+  * 只使用了`OpenSSL`，没有使用其他本地代码(native socket, poller等)
   * 可以配合 NIO 和 NIO2
 * `APR`
   * 大量的native code
-  * 同样使用了`OpenSSL`
+  * `TLS`同样使用了`OpenSSL`
 
 ---
-* `OpenSSL`性能比`JSSE`好很多；不再需要`APR`
+<style scoped>
+li {
+  font-size: 30px;
+}
+h3 {
+  font-size: 45px;
+}
+</style>
+### `TLS`实现的性能对比
+* `OpenSSL`性能比纯Java实现好很多；使用`TLS`可以不再需要`APR`
 * `Linux`上`NIO.2`是通过`epoll`来模拟实现的[EPollPort.java](https://github.com/openjdk/jdk/blob/6bab0f539fba8fb441697846347597b4a0ade428/src/java.base/linux/classes/sun/nio/ch/EPollPort.java)
 
 ![jsse-openssl](./media/http2/jsse-openssl.png)
@@ -583,7 +648,7 @@ org.apache.coyote.AbstractProtocol.start 开始协议处理句柄
 * ServerHello
 
 ---
-### Chrome开发者工具
+### 使用Chrome开发者工具观察
 ![chrome width:1000](./media/http2/chrome.png)
 
 ---
