@@ -488,8 +488,8 @@ Connection closed by foreign host.
   * 同样使用了`OpenSSL`
 
 ---
-### `Tomcat`三种`TLS`实现的对比
 * `OpenSSL`性能比`JSSE`好很多；不再需要`APR`
+* `Linux`上`NIO.2`是通过`epoll`来模拟实现的[EPollPort.java](https://github.com/openjdk/jdk/blob/6bab0f539fba8fb441697846347597b4a0ade428/src/java.base/linux/classes/sun/nio/ch/EPollPort.java)
 
 ![jsse-openssl](./media/http2/jsse-openssl.png)
 
@@ -621,3 +621,5 @@ org.apache.coyote.AbstractProtocol.start 开始协议处理句柄
 ---
 ![bg right](./media/http2/ending.jpg)
 # Thank You!
+
+<!-- footer: '[刘美佳 - 职业模特](https://weibo.com/u/5171835974)' -->
