@@ -425,7 +425,7 @@ li {
   * 新协议一般都要依赖于建立`TLS`信道，例如`WebSocket`、`SPDY`
 
 ---
-### `h2`和`h2c`协议协商机制
+### `h2`和`h2c`升级协商机制
 * 基于`TLS`运行的`HTTP/2`被称为`h2`
 * 直接在`TCP`之上运行的`HTTP/2`被称为`h2c`
 
@@ -497,12 +497,59 @@ li {
 ![setting-frame](./media/http2/setting-frame3.png)
 
 ---
-### `TLS` 通讯过程
-![bg right w:650](./media/http2/tls-handshake.png)
+### `TLS`协议的设计目标
+* 保密性
+* 完整性
+* 身份验证
+
+---
+### `TLS`发展史
+* 1994年，NetScape 设计了`SSL`协议(Secure Sockets Layer) 1.0，未正式发布
+* 1995年，NetScape 发布 `SSL` 2.0
+* 1996年，发布`SSL` 3.0
+* 1999年，IETF标准化了`SSL`协议，更名为`TLS`(Transport Layer Security)，发布`TLS` 1.0
+* 2006年4月，IETF 工作组发布了`TLS` 1.1
+* 2008年8月，IETF 工作组发布了`TLS` 1.2
+* 2018年8月，`TLS` 1.3正式发布
+
+---
+### `TLS` 1.2 握手过程
+![bg right w:600](./media/http2/tls-handshake.png)
 * 验证身份
 * 达成安全套件共识
 * 传递密钥
 * 加密通讯
+非对称加密只在建立`TLS`信道时使用，之后的通信使用握手时生成的共享密钥加密
+
+---
+<style scoped>
+li {
+  font-size: 30px;
+}
+</style>
+### `TLS` 安全密码套件
+![cipher-suites width:800](./media/http2/cipher-suites.png)
+* 密钥交换算法
+  * 双方在完全没有对方任何预先信息，通过不安全信道创建密钥
+  * 1976年，Diffie–Hellman key exchange，简称 DH
+  * 基于椭圆曲线(Elliptic Curve)升级DH协议，ECDHE
+* 身份验证算法
+  * 非对称加密算法，Public Key Infrastructure(PKI)
+* 对称加密算法、强度、工作模式
+  * 工作模式：将明文分成多个等长的`Block`模块，对每个模块分别加解密
+* hash签名算法
+
+---
+### `TLS`1.3的握手优化
+* [An Overview of TLS 1.3 – Faster and More Secure](https://www.thesslstore.com/blog/explaining-ssl-handshake/)
+
+![tls-1.3-handshake-performance width:700](./media/http2/tls-1.3-handshake-performance.png)
+
+---
+### 测试`TLS`的支持情况
+* https://www.ssllabs.com/ssltest/index.html
+
+![tlstest width:850](./media/http2/tlstest.png)
 
 ---
 ### Application-Layer Protocol Negotiation
