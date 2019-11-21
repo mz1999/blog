@@ -54,7 +54,7 @@ Tomcat实现支持了多种应用层协议：
 
 ![processor](./media/tomcat/processor.png)
 
-`Processor`解析网络字节流生成Tomcat的`Request`对象后，会调用`Adapter`的`Service`方法。`Adapter`是`Servlet`引擎的入口，`Adapter`负责将Tomcat的`Request`对象转换为标准的`ServletRequest`，然后再调用`Servlet`引擎的`service`方法。
+`Processor`解析网络字节流生成Tomcat的`Request`对象后，会调用`Adapter.service(request, response)`方法。`Adapter`是`Servlet`引擎的入口，`Adapter`负责将Tomcat的`Request`对象转换为标准的`ServletRequest`，然后再调用`Servlet`引擎的`service`方法。
 
 ![adapter](./media/tomcat/adapter.png)
 
