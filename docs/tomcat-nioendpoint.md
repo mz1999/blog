@@ -11,7 +11,7 @@
 
 * `Acceptor`实现了`Runnable`接口，运行在一个独立的线程中。`Acceptor`的`run`方法在循环中调用`ServerSocketChannel.accept()`，将返回的`SocketChannel`包装成`NioSocketWrapper`，然后将`NioSocketWrapper`注册进`Poller`。
 
-* `Poller`同样实现了`Runnable`接口，运行在一个独立的线程中。`Poller`的核心任务是响应I/O事件，它在无限循环中调用`Selector.select()`，会得到准备就绪的`NioSocketWrapper`列表，为每个`NioSocketWrapper`生成一个`SocketProcessor`任务，然后把任务扔进线程池`Executor`去处理。
+* `Poller`同样实现了`Runnable`接口，运行在一个独立的线程中。`Poller`的核心任务是检测I/O事件，它在无限循环中调用`Selector.select()`，会得到准备就绪的`NioSocketWrapper`列表，为每个`NioSocketWrapper`生成一个`SocketProcessor`任务，然后把任务扔进线程池`Executor`去处理。
 
 * `Executor`是可配置的线程池，负责运行`SocketProcessor`任务。`SocketProcessor`实现了`Runnable`接口，在`run`方法中会调用`ConnectionHandler.process(NioSocketWrapper, SocketEvent)`处理当前任务关联的`NioSocketWrapper`。
 
