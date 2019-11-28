@@ -190,7 +190,7 @@ p {
 * 2015年正式发布`HTTP/2`
   * 主要目标：改进传输性能，降低延迟，提高吞吐量
   * 保持原有的高层协议语义不变
-* 根据[W3Techs的报告](https://w3techs.com/technologies/details/ce-http2/all/all)，截止2019年10月，全球已经有 **41.3%** 的网站开启了`HTTP/2`
+* 根据[W3Techs的报告](https://w3techs.com/technologies/details/ce-http2/all/all)，截止2019年11月，全球已经有 **42.1%** 的网站开启了`HTTP/2`
 
 ---
 ### HTTP简史
@@ -734,4 +734,4 @@ org.apache.coyote.AbstractProtocol.start 开始协议处理句柄
 ![bg right](./media/http2/ending.jpg)
 # Thank You!
 
-<!-- footer: '[刘美佳 - 职业模特](https://weibo.com/u/5171835974)' -->
+<!-- footer: '[刘美佳啊 - 职业模特](https://weibo.com/u/5171835974)' -->
