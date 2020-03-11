@@ -24,7 +24,7 @@
 
 ---
 * [关系数据库查询处理基础知识扫盲](https://github.com/mz1999/Apusic-db-team/blob/master/docs/rdbms-fundamental.md)
-* [Cursor功能实现总结](https://github.com/mz1999/Apusic-db-team/blob/master/docs/cursor-summary.pptx)
+* [TiDBCursor功能实现总结](./docs/cursor-summary.pdf)
 * [关于MySQL XA事务的隔离级别](https://github.com/mz1999/Apusic-db-team/blob/master/docs/mysql-xa.md)
 * [从RadonDB看新型数据库中间件的特性](https://github.com/mz1999/Apusic-db-team/blob/master/docs/radondb.md)
 * [TiDB基于代价优化（CBO）实现代码导读](https://github.com/mz1999/Apusic-db-team/blob/master/docs/cbo-guide.md)
