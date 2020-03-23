@@ -1,7 +1,7 @@
 
 # 使用火焰图进行Java性能分析
 
-## 性能分析工具分类
+## 性能分析工具的分类
 
 性能分析的技术和工具可以分为以下几类：
 
@@ -16,7 +16,9 @@
 
 2. **Tracing**
 
-**Tracing**是收集每个事件的数据进行分析。**Tracing**会捕获所有的事件，因此有比较大的CPU开销，并且可能需要大量存储保存数据。常见的**Tracing**工具有：
+**Tracing**是收集每个事件的数据进行分析。**Tracing**会捕获所有的事件，因此有比较大的CPU开销，并且可能需要大量存储来保存数据。
+
+常见的**Tracing**工具有：
 
 * tcpdump: network packet tracing
 * blktrace: block I/O tracing
@@ -26,20 +28,22 @@
 
 3. **Profiling**
 
-**Profiling**是通过收集目标行为的样本或快照，来了解目标的特征。**Profiling**可以从多个方面对程序进行动态分析，如CPU、Memory、Thread、I/O等，其中`CPU Profiling`的应用最为广泛。
+**Profiling** 是通过收集目标行为的样本或快照，来了解目标的特征。**Profiling**可以从多个方面对程序进行动态分析，如`CPU`、`Memory`、`Thread`、`I/O`等，其中对`CPU`进行`Profiling`的应用最为广泛。
 
-`CPU Profiling`是基于一定频率对运行的程序进行采样，来分析消耗CPU的代码路径。可以基于固定的时间间隔进行采样，例如每10毫秒采样一次。也可以基于固定速率采样，例如每秒采集100个样本。
+`CPU Profiling`原理是基于一定频率对运行的程序进行采样，来分析消耗CPU时间的代码路径。可以基于固定的时间间隔进行采样，例如每10毫秒采样一次。也可以设置固定速率采样，例如每秒采集100个样本。
 
-`CPU Profiling`经常被用于分析代码的执行热点，如“哪个方法占用CPU的执行时间最长”、“每个方法占用CPU的比例是多少”等等，通过`CPU Profiling`得到上述相关信息后，我们就可以针对热点瓶颈进行分析和性能优化。
+`CPU Profiling`经常被用于分析代码的热点，比如“哪个方法占用CPU的执行时间最长”、“每个方法占用CPU的比例是多少”等等，然后我们就可以针对热点瓶颈进行分析和性能优化。
 
 Linux上常用的**CPU Profiling**工具有：
 
 * [perf](https://perf.wiki.kernel.org/index.php/Main_Page)的 [record](https://perf.wiki.kernel.org/index.php/Tutorial#Sampling_with_perf_record) 子命令
 * [BPF profile](https://github.com/iovisor/bcc/blob/master/tools/profile.py)
 
-1. **Monitoring**
+4. **Monitoring**
 
-系统性能监控会记录一段时间内的性能统计信息，以便可以基于时间周期进行比较。这对于容量规划，显示高峰期的使用情况很有用。历史值还为我们理解当前性能指标提供了上下文。监控单个操作系统最常用工具是**sar**（system activity reporter，系统活动报告）命令。sar通过一个agent定期执行来记录系统计数器的状态，并可以使用sar命令查看它们，例如：
+系统性能监控会记录一段时间内的性能统计信息，以便能够基于时间周期进行比较。这对于容量规划，了解高峰期的使用情况都很有帮助。历史值还为我们理解当前的性能指标提供了上下文。
+
+监控单个操作系统最常用工具是**sar**（system activity reporter，系统活动报告）命令。`sar`通过一个定期执行的agent来记录系统计数器的状态，并可以使用`sar`命令查看它们，例如：
 
 ```
 $ sar
@@ -58,7 +62,7 @@ Linux 4.15.0-88-generic (mazhen) 	03/19/2020 	_x86_64_	(4 CPU)
 
 ## perf
 
-**perf**最初被称为`Performance Counters for Linux`(PCL)，是使用`Linux`性能计数器子系统的工具。`perf`在Linux`2.6.31`合并进内核，位于[tools/perf](https://github.com/torvalds/linux/tree/master/tools/perf)目录下。
+**perf**最初是使用`Linux`性能计数器子系统的工具，因此`perf`开始的名称是`Performance Counters for Linux`(PCL)。`perf`在Linux`2.6.31`合并进内核，位于[tools/perf](https://github.com/torvalds/linux/tree/master/tools/perf)目录下。
 
 随后`perf`进行了各种增强，增加了`tracing`、`profiling`等能力，可用于性能瓶颈的查找和热点代码的定位。
 
@@ -73,7 +77,7 @@ Linux 4.15.0-88-generic (mazhen) 	03/19/2020 	_x86_64_	(4 CPU)
 * **perf Tools**：perf用户态命令，为用户提供了一系列工具集，用于收集、分析性能数据。
 * **perf Event Subsystem**：Perf Events是内核的子系统之一，和用户态工具共同完成数据的采集。
 
-内核依赖的硬件，比如说`CPU`，一般会内置一些性能统计方面的寄存器（[Hardware Performance Counter](https://en.wikipedia.org/wiki/Hardware_performance_counter)），通过软件读取这些特殊寄存器里的信息，我们也可以得到很多直接关于硬件的信息。`perf`最初是用来监测`CPU`的性能监控单元（performance monitoring unit, PMU）的。
+内核依赖的硬件，比如说`CPU`，一般会内置一些性能统计方面的寄存器（[Hardware Performance Counter](https://en.wikipedia.org/wiki/Hardware_performance_counter)），通过软件读取这些特殊寄存器里的信息，我们也可以得到很多直接关于硬件的信息。`perf`最初就是用来监测`CPU`的性能监控单元（performance monitoring unit, PMU）的。
 
 ### perf Events分类
 
@@ -87,7 +91,7 @@ Linux 4.15.0-88-generic (mazhen) 	03/19/2020 	_x86_64_	(4 CPU)
 * **Software Events**: 基于内核计数器的底层事件。例如，CPU迁移，minor faults，major faults等。
 * **Kernel Tracepoint Events**: 内核的静态`Tracepoint`，已经硬编码在内核需要收集信息的位置。
 * **User Statically-Defined Tracing (USDT)**: 用户级程序的静态`Tracepoint`。
-* **Dynamic Tracing**: 用户自定义事件，可以动态的插入到内核，或正在运行中的程序。`Dynamic Tracing`技术分为两类：
+* **Dynamic Tracing**: 用户自定义事件，可以动态的插入到内核或正在运行中的程序。`Dynamic Tracing`技术分为两类：
   * [kprobes](https://lwn.net/Articles/132196/)：对于kernel的动态追踪技术，可以动态地在指定的内核函数的入口和出口等位置上放置探针，并定义自己的探针处理程序。
   * [uprobes](https://lwn.net/Articles/499190/)：对于用户态软件的动态追踪技术，可以安全地在用户态函数的入口等位置设置动态探针，并执行自己的探针处理程序。
 
@@ -124,15 +128,15 @@ List of pre-defined events (to be used in -e):
 
 ```
 
+### perf的使用
+
 如果还没有安装`perf`，可以使用`apt`或`yum`进行安装：
 
 ```
 sudo apt install linux-tools-$(uname -r) linux-tools-generic
 ```
 
-### perf的使用
-
-`perf`的功能强大，支持硬件计数器统计，定时采样，静态和动态tracing等。本文简单介绍几个常用的使用场景。
+`perf`的功能强大，支持硬件计数器统计，定时采样，静态和动态tracing等。本文只介绍几个常用的使用场景，如果想全面的了解`perf`的使用，可以参考[perf.wiki](https://perf.wiki.kernel.org/index.php/Main_Page)。
 
 1. **CPU Statistics**
 
@@ -163,7 +167,7 @@ sudo apt install linux-tools-$(uname -r) linux-tools-generic
 
 * `sudo perf record -F 99 -a -g  sleep 10`
 
-对所有CPU（**-a**）进行call stacks（**-g**）采样，采样频率为99 Hertz （**-F 99**），持续10秒（**sleep 10**）。
+对所有CPU（**-a**）进行`call stacks`（**-g**）采样，采样频率为`99 Hertz`（**-F 99**），即每秒99次，持续10秒（**sleep 10**）。
 
 * `sudo perf record -F 99 -a -g  -p PID sleep 10`
 
@@ -209,23 +213,23 @@ $ sudo perf report --stdio
 
 ![tcpdump](./media/perf/tcpdump.png)
 
-2013年`BPF`被重写，并于2014年包含进`Linux`内核中。改进后的`BPF`成为了通用执行引擎，可用于多种用途，包括创建高级性能分析工具。
+2013年`BPF`被重写，被称为**Extended BPF (eBPF)**，于2014年包含进`Linux`内核中。改进后的`BPF`成为了通用执行引擎，可用于多种用途，包括创建高级性能分析工具。
 
-`BPF`允许在内核中运行`mini programs`，来响应系统和应用程序事件（例如磁盘I/O事件）。这种运作机制和`JavaScript`类似：`JavaScript`是运行在浏览器引擎中的`mini programs`，响应鼠标点击等事件。`BPF`使内核可编程化，从而使用户（包括非内核开发人员）能够自定义和控制他们的系统，以解决实际问题。
+`BPF`允许在内核中运行`mini programs`，来响应系统和应用程序事件（例如磁盘I/O事件）。这种运作机制和`JavaScript`类似：`JavaScript`是运行在浏览器引擎中的`mini programs`，响应鼠标点击等事件。`BPF`使内核可编程化，使用户（包括非内核开发人员）能够自定义和控制他们的系统，以解决实际问题。
 
-`BPF`由指令集，存储对象和helper函数组成，可以被认为是一个**虚拟机**。`BPF`指令集由位于Linux内核的`BPF runtime`执行，`BPF runtime`包括了解释器和JIT编译器。`BPF`是一种灵活高效的技术，可以用于`networking`，`tracing`和安全等领域。我们重点关注它作为系统监测工具使用。
+`BPF`可以被认为是一个**虚拟机**，由指令集，存储对象和helper函数三部分组成。`BPF`指令集由位于Linux内核的`BPF runtime`执行，`BPF runtime`包括了**解释器**和**JIT编译器**。`BPF`是一种灵活高效的技术，可以用于`networking`，`tracing`和安全等领域。我们重点关注它作为系统监测工具方面的应用。
 
 ![linux_ebpf_internals](./media/perf/linux_ebpf_internals.png)
 
-和`perf`一样，`BPF`能够instruments多种事件源，同时可以通过调用`perf_events`以使用它的功能：
+和`perf`一样，`BPF`能够监测多种性能事件源，同时可以通过调用`perf_events`，使用`perf`已有的功能：
 
 ![](./media/perf/linux_ebpf_support.png)
 
-BPF可以在内核运行计算和统计汇总，这样大大减少了复制到用户空间的数据量：
+`BPF`可以在内核运行计算和统计汇总，这样大大减少了复制到用户空间的数据量：
 
 ![before_and_after_using_BPF](./media/perf/before_and_after_using_BPF.png)
 
-BPF已经内置在Linux内核中，因此你可以在生产环境中使用BPF，而无需再安装任何新的内核组件。
+`BPF`已经内置在Linux内核中，因此你无需再安装任何新的内核组件，就可以在生产环境中使用BPF。
 
 ## BCC和bpftrace
 
@@ -233,15 +237,19 @@ BPF已经内置在Linux内核中，因此你可以在生产环境中使用BPF，
 
 ![bcc-bpftrace](./media/perf/bcc-bpftrace.png)
 
-**BCC（BPF Compiler Collection）** 是为`BPF`开发的第一个`higher-level tracing framework`。 `BCC`提供了一个C编程环境，使用`LLVM`工具链来把 C 代码编译为`BPF`虚拟机所接受的字节码。此外它还支持`Python`，`Lua`和`C++`作为用户接口。
+**BCC（BPF Compiler Collection）** 提供了一个C编程环境，使用`LLVM`工具链来把 C 代码编译为`BPF`虚拟机所接受的字节码。此外它还支持`Python`，`Lua`和`C++`作为用户接口。
 
 **bpftrace** 是一个比较新的前端，它为开发`BPF`工具提供了一种专用的高级语言。`bpftrace`适合单行代码和自定义短脚本，而`BCC`更适合复杂的脚本和守护程序。
 
-`BCC`和`bpftrace`没有在内核代码库，而是在GitHub上名为[IO Visor](https://github.com/iovisor)的`Linux Foundation`项目中。
+`BCC`和`bpftrace`没有在内核代码库，它们存放在GitHub上名为[IO Visor](https://github.com/iovisor)的`Linux Foundation`项目中。
+
+* [iovisor/bcc](https://github.com/iovisor/bcc)
+* [iovisor/bpftrace](https://github.com/iovisor/bpftrace)
+
 
 ### BCC的安装
 
-`BCC`可以参考[官方文档](https://github.com/iovisor/bcc/blob/master/INSTALL.md)进行安装。以`Ubuntu 18.04 LTS`为例，建议从源码build安装：
+`BCC`可以参考官方的[安装文档](https://github.com/iovisor/bcc/blob/master/INSTALL.md)。以`Ubuntu 18.04 LTS`为例，建议从源码build安装：
 
 
 *  安装build依赖
@@ -298,21 +306,21 @@ Tracing block device I/O... Hit Ctrl-C to end.
      16384 -> 32767      : 3        |*****                                   |
 ```
 
-`biolatency`展示的直方图比`iostat`的平均值能更好的解释磁盘`I/O`性能。
+`biolatency`展示的直方图比`iostat`的平均值能更好的理解磁盘`I/O`性能。
 
 `BCC`已经自带了`CPU profiling`工具：
 
 > * [tools/profile](https://github.com/iovisor/bcc/blob/master/tools/profile.py): Profile CPU usage by sampling stack traces at a timed interval.
 
-此外，还可以关注[Off-CPU](http://www.brendangregg.com/offcpuanalysis.html)的分析工具：
+此外，`BCC`还提供了[Off-CPU](http://www.brendangregg.com/offcpuanalysis.html)的分析工具：
 
 > * [tools/offcputime](https://github.com/iovisor/bcc/blob/master/tools/offcputime.py): Summarize off-CPU time by kernel stack trace
 
-一般的`CPU profiling`都是分析`on-CPU`，即CPU时间都花费在了哪些代码路径。`off-CPU`是指进程不在CPU上运行时所花费的时间，进程因为某种原因处于休眠状态，比如说等待锁，或者被进程调度器（scheduler）剥夺 CPU 时间片。这些情况都会导致这个进程无法运行在 CPU 上，但是仍然花费很多时间。
+一般的`CPU profiling`都是分析`on-CPU`，即CPU时间都花费在了哪些代码路径。`off-CPU`是指进程不在CPU上运行时所花费的时间，进程因为某种原因处于休眠状态，比如说等待锁，或者被进程调度器（scheduler）剥夺了 CPU 的使用。这些情况都会导致这个进程无法运行在 CPU 上，但是仍然花费了时间。
 
 ![thread_states](./media/perf/thread_states.png)
 
-`Off-CPU`分析是对`on-CPU`分析的补充，让我们知道线程所有的时间花费，更全面的了解程序的运行情况。
+`off-CPU`分析是对`on-CPU`的补充，让我们知道线程所有的时间花费，更全面的了解程序的运行情况。
 
 后面会介绍`profile`，`offcputime`如何生成火焰图进行可视化分析。
 
@@ -386,7 +394,9 @@ Tracing block device I/O... Hit Ctrl-C to end.
 
 [火焰图](http://www.brendangregg.com/flamegraphs.html)是[Brendan Gregg](http://www.brendangregg.com/)发明的将`stack traces`可视化展示的方法。火焰图把时间和空间两个维度上的信息融合在一张图上，将频繁执行的代码路径以可视化的形式，非常直观的展现了出来。
 
-火焰图可以用于可视化来自任何`profiler`工具的记录的`stack traces`信息，除了用来`CPU profiling`，还适用于`off-CPU`，`page faults`等多种场景的分析。本文只讨论 `on-CPU` 和 `off-CPU` 火焰图。
+火焰图可以用于可视化来自任何`profiler`工具的记录的`stack traces`信息，除了用来`CPU profiling`，还适用于`off-CPU`，`page faults`等多种场景的分析。本文只讨论 `on-CPU` 和 `off-CPU` 火焰图的生成。
+
+要理解火焰图，先从理解`Stack Trace`开始。
 
 ### Stack Trace
 
@@ -400,7 +410,7 @@ func_a
 
 ### Profiling Stack Traces
 
-我们做`CPU profiling`时，会使用perf或bcc定时采样`Stack Trace`，这样会收集到非常多的`Stack Trace`。前面介绍了`perf report`会将`Stack Trace`样本汇总为调用树，并显示每个路径的百分比。火焰图会怎么处理呢？
+我们做`CPU profiling`时，会使用perf或bcc定时采样`Stack Trace`，这样会收集到非常多的`Stack Trace`。前面介绍了`perf report`会将`Stack Trace`样本汇总为调用树，并显示每个路径的百分比。火焰图是怎么展示的呢？
 
 考虑下面的示例，我们用perf定时采样收集了多个`Stack Trace`，然后将相同的`Stack Trace`归纳合并，统计出次数：
 
@@ -439,7 +449,7 @@ func_a
 
 可以使用Brendan Gregg开发的开源项目[FlameGraph](https://github.com/brendangregg/FlameGraph)生成交互式的SVG火焰图。该项目提供了脚本，可以将采集的样本归纳合并，统计出`Stack Trace`出现的频率，然后使用[flamegraph.pl](https://github.com/brendangregg/FlameGraph/blob/master/flamegraph.pl)生成SVG火焰图。
 
-我们可以把FlameGraph项目clone下来使用：
+我们先把FlameGraph项目clone下来，后面会用到：
 
 ```
 git clone https://github.com/brendangregg/FlameGraph.git
@@ -447,30 +457,30 @@ git clone https://github.com/brendangregg/FlameGraph.git
 
 ## Java CPU Profiling
 
-虽然有很多Java专用的`profiler`工具，但这些工具一般只能看到Java方法的执行，缺少了`GC`或`JVM`的CPU时间消耗，并且有些工具的Method tracing性能损耗比较大。
+虽然有很多Java专用的`profiler`工具，但这些工具一般只能看到Java方法的执行，缺少了`GC`，`JVM`的CPU时间消耗，并且有些工具的`Method tracing`性能损耗比较大。
 
-`perf`和`BCC profile`的优点是它很高效，在内核上下文中对堆栈进行计数，并能完整显示用户态和内核态的CPU使用，看到native libraries（例如libc），JVM（libjvm），Java方法和内核中花费的时间。
+`perf`和`BCC profile`的优点是它很高效，在内核上下文中对堆栈进行计数，并能完整显示用户态和内核态的CPU使用，能看到native libraries（例如libc），JVM（libjvm），Java方法和内核中花费的时间。
 
 ![java-profilers](./media/perf/java-profilers.png)
 
 但是，`perf`和`BCC profile`这种系统级的profiler不能很好地与Java配合使用，它们识别不了Java方法和`stack traces`。这是因为：
 
-* JVM的JIT（just-in-time）不给系统profiler公开符号表
+* JVM的`JIT（just-in-time）`没有给系统级profiler公开符号表
 * JVM还使用帧指针寄存器（frame pointer register，x86-64上的RBP）作为通用寄存器，打破了传统的堆栈遍历
 
 为了能生成包含Java栈与Native栈的火焰图，目前有两种解决方式：
 
-* 使用`JVMTI` agent [perf-map-agent](https://github.com/jvm-profiling-tools/perf-map-agent)，生成Java符号表，供perf和bcc读取（/tmp/perf-PID.map）。同时要加上`-XX:+PreserveFramePointer` JVM 参数，让`perf`可以遍历基于帧指针（frame pointer）的堆栈。
-* 使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)，该项目将perf的堆栈追踪和Java的[AsyncGetCallTrace](http://psy-lob-saw.blogspot.com/2016/06/the-pros-and-cons-of-agct.html)结合了起来，同样能够获得mixed-mode火焰图。同时，此方法不需要启用帧指针，所以不用加上`-XX:+PreserveFramePointer`参数。
+* 使用`JVMTI` agent [perf-map-agent](https://github.com/jvm-profiling-tools/perf-map-agent)，生成Java符号表，供`perf`和`bcc`读取（/tmp/perf-PID.map）。同时要加上`-XX:+PreserveFramePointer` JVM 参数，让`perf`可以遍历基于帧指针（frame pointer）的堆栈。
+* 使用[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)，该项目将`perf`的堆栈追踪和JDK提供的[AsyncGetCallTrace](http://psy-lob-saw.blogspot.com/2016/06/the-pros-and-cons-of-agct.html)结合了起来，同样能够获得mixed-mode火焰图。同时，此方法不需要启用帧指针，所以不用加上`-XX:+PreserveFramePointer`参数。
   
 
 下面我们就分别演示这两种方式。
 
 ### perf-map-agent
 
-`perf`期望能从`/tmp/perf-<pid>.map`中获得在未知内存区域执行的代码的符号表。`perf-map-agent`可以为JIT编译的方法生成`/tmp/perf-<pid>.map`文件，以配合`perf`一起使用。
+`perf`期望能从`/tmp/perf-<pid>.map`中获得在未知内存区域执行的代码的符号表。`perf-map-agent`可以为`JIT`编译的方法生成`/tmp/perf-<pid>.map`文件，以满足`perf`的要求。
 
-首先下载并编译perf-map-agent：
+首先下载并编译`perf-map-agent`：
 
 ```
 git clone https://github.com/jvm-profiling-tools/perf-map-agent.git
@@ -483,9 +493,9 @@ make
 
 `perf-map-agent`提供了[perf-java-flames](https://github.com/jvm-profiling-tools/perf-map-agent/blob/master/bin/perf-java-flames)脚本，可以一步生成火焰图。
 
-`perf-java-flames`接收`perf record`命令参数，它会调用perf进行采样，然后使用[FlameGraph](https://github.com/brendangregg/FlameGraph)生成火焰图，一步完成，非常方便。
+`perf-java-flames`接收`perf record`命令参数，它会调用`perf`进行采样，然后使用[FlameGraph](https://github.com/brendangregg/FlameGraph)生成火焰图，一步完成，非常方便。
 
-注意，记得要加上`-XX:+PreserveFramePointer` JVM 参数。
+注意，记得要给被`profiling`的Java进程加上`-XX:+PreserveFramePointer` JVM 参数。
 
 设置必要的环境变量：
 
@@ -504,7 +514,7 @@ export PERF_RECORD_SECONDS=[采样时间]
 
 对指定进程的上下文切换（**-e context-switches**）进行采样，并生成火焰图。
 
-* 当然也可以只为perf生成Java符号表，然后直接使用perf
+* 当然也可以只为`perf`生成Java符号表，然后直接使用perf采样
 
 ```
 ./bin/create-java-perf-map.sh [PID]; sudo perf record -F 99 -p [PID] -a -g -- sleep 15
@@ -517,9 +527,9 @@ sudo perf report --stdio
 
 #### 配合`bcc profile`使用
 
-`FlameGraph`项目提供了[jmaps](https://github.com/brendangregg/FlameGraph/blob/master/jmaps)脚本，它会调用`perf-map-agent`为当前运行的所有Java进程生成perf需要的符号表。
+`FlameGraph`项目提供了[jmaps](https://github.com/brendangregg/FlameGraph/blob/master/jmaps)脚本，它会调用`perf-map-agent`为当前运行的所有Java进程生成符号表。
 
-首先在jmaps脚本中设置好JAVA_HOME和`perf-map-agent`的正确位置：
+首先为`jmaps`脚本设置好`JAVA_HOME`和`perf-map-agent`的正确位置：
 
 ```
 JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-8-oracle}
@@ -535,7 +545,7 @@ Mapping PID 30711 (user adp):
 wc(1):   3486  10896 214413 /tmp/perf-30711.map
 ```
 
-我们在做任何profile之前，最好调用一下`jmaps`，保持符号表是最新的。
+我们在做任何`profiling`之前，都需要调用`jmaps`，保持符号表是最新的。
 
 * CPU Profiling火焰图
 
@@ -581,18 +591,41 @@ sudo ./jmaps ; sudo /usr/share/bcc/tools/offcputime -K --state 2 -f 30 > out.off
 
 ### async-profiler
 
-[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)将perf的堆栈追踪和Java的[AsyncGetCallTrace](http://psy-lob-saw.blogspot.com/2016/06/the-pros-and-cons-of-agct.html)结合了起来，做到同时采样Java栈与Native栈，因此也就可以同时分析Java代码和Native代码中存在的性能热点。
+[async-profiler](https://github.com/jvm-profiling-tools/async-profiler)将`perf`的堆栈追踪和JDK提供的[AsyncGetCallTrace](http://psy-lob-saw.blogspot.com/2016/06/the-pros-and-cons-of-agct.html)结合了起来，做到同时采样Java栈与Native栈，因此也就可以同时分析Java代码和Native代码中存在的性能热点。
 
-从Linux 4.6开始，从`non-root`进程使用perf捕获内核的call stacks，需要设置如下两个内核参数：
+`AsyncGetCallTrace`是JDK内部提供的一个函数，它的原型如下：
+
+```
+typedef struct {
+  jint lineno;         // BCI in the source file
+  jmethodID method_id; // method executed in this frame
+} ASGCT_CallFrame;
+
+typedef struct {
+  JNIEnv *env_id   //Env where trace was recorded
+  jint num_frames; // number of frames in this trace
+  ASGCT_CallFrame *frames;
+} ASGCT_CallTrace; 
+
+void AsyncGetCallTrace(ASGCT_CallTrace *trace, // pre-allocated trace to fill
+                       jint depth,             // max number of frames to walk up the stack
+                       void* ucontext)         // signal context
+```
+
+可以看出，该函数直接通过`ucontext`就能获取到完整的Java调用栈。
+
+#### async-profiler的使用
+
+下载并解压好`async-profiler`安装包。
+
+从Linux 4.6开始，从`non-root`进程使用`perf`捕获内核的`call stacks`，需要设置如下两个内核参数：
 
 ```
 # echo 1 > /proc/sys/kernel/perf_event_paranoid
 # echo 0 > /proc/sys/kernel/kptr_restrict
 ```
 
-下载并解压好async-profiler安装包。
-
-`async-profiler`的使用比较简单，一步能够生成火焰图。另外，也不需要Java进程设置`-XX:+PreserveFramePointer`参数。
+`async-profiler`的使用非常简单，一步就能生成火焰图。另外，也不需要为被`profiling`的Java进程设置`-XX:+PreserveFramePointer`参数。
 
 ```
 ./profiler.sh -d 30 -f /tmp/flamegraph.svg [PID]
@@ -605,12 +638,20 @@ sudo ./jmaps ; sudo /usr/share/bcc/tools/offcputime -K --state 2 -f 30 > out.off
 为Java生成`CPU profiling`火焰图，基本的流程都是：
 
 1. 使用工具采集样本
-2. 使用`FlameGraph`项目提供的脚本，将采集的样本归纳合并，统计出Stack Trace出现的频率
+2. 使用`FlameGraph`项目提供的脚本，将采集的样本归纳合并，统计出`Stack Trace`出现的频率
 3. 最后使用`flamegraph.pl`利用上一步的输出，绘制SVG火焰图
 
-为了能够生成`Java stacks`和`native stacks`完整的火焰图，解决`perf`和`bcc profile`不能识别Java符号和Java `stack traces`的问题，有以下两种方式：
+为了能够生成`Java stacks`和`native stacks`完整的火焰图，解决`perf`和`bcc profile`不能识别Java符号和Java `stack traces`的问题，目前有以下两种方式：
 
 1. `perf-map-agent` 加上 `perf`或`bcc profile`
-2. `async-profiler`
+2. `async-profiler`（内部会使用到`perf`）
 
-如果只是对Java进程做`on-CPU`分析，`async-profiler`更方便好用。如果需要更全面的了解程序的运行情况，例如分析系统锁的开销，阻塞的 I/O 操作，以及进程调度器（scheduler）的工作，那么还是需要使用系统级的profiler工具`perf`和`bcc`。
+如果只是对Java进程做`on-CPU`分析，`async-profiler`更加方便好用。如果需要更全面的了解Java进程的运行情况，例如分析系统锁的开销，阻塞的 I/O 操作，以及进程调度器（`scheduler`）的工作，那么还是需要使用功能更强大的`perf`和`bcc`。
+
+## 参考资料
+
+* [perf Examples](http://www.brendangregg.com/perf.html)
+* [Linux Extended BPF (eBPF) Tracing Tools](http://www.brendangregg.com/ebpf.html)
+* [BPF Performance Tools (book)](http://www.brendangregg.com/bpf-performance-tools-book.html)
+* [Off-CPU Analysis](http://www.brendangregg.com/offcpuanalysis.html)
+* [Flame Graphs](http://www.brendangregg.com/flamegraphs.html)
