@@ -9,13 +9,13 @@
 
 首先看单体应用，所有的模块部署在一个应用服务器上，业务数据都保存在单个数据库中，这种场景本地事务就可以满足需求。
 
-![local transaction](./media/distributedtransaction/local-transaction.png)
+ <img src="./media/distributedtransaction/local-transaction.png" width = "50%"  alt="local transaction"/>
 
 * **数据库水平拆分**
 
 如果数据库按照业务模块进行水平拆分，完成一个业务请求会涉及到跨库的资源访问和更新，这时候就需要使用应用服务器的`JTA`进行两阶段提交，保证跨库操作的事务完整性。
 
-![JTA](./media/distributedtransaction/jta.png)
+ <img src="./media/distributedtransaction/jta.png" width = "50%"  alt="jta"/>
 
 * **应用模块拆分**
 
