@@ -1,4 +1,5 @@
 
+* [从Ftrace开始内核探索之旅](./docs/ftrace.md)
 * [使用GDB调试Linux内核](./docs/gdb-kernel-debugging.md)
 
 ---
