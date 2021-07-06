@@ -6,7 +6,7 @@
 * [Atomikos在微服务场景下的使用](./docs/atomikos-sample.md)
 * [应用服务器的分布式事务支持和Seata的对比分析](./docs/distributed-transaction.md)
 * [使用火焰图进行Java性能分析](./docs/java-performance-analysis-with-flame-graphs.md)
-* [Consensus and Distributed Transactions](./docs/media/Consensus%20and%20Distributed%20Transactions.pdf)
+* [Consensus and Distributed Transactions](./docs/Consensus%20and%20Distributed%20Transactions.pdf)
 * [Tomcat的NioEndpoint实现分析](./docs/tomcat-nioendpoint.md)
 * [Tomcat系统架构简介](./docs/tomcat-architecture.md)
 * [给程序员的健身锻炼指南](./docs/programmer-workout.md)

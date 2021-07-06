@@ -7,7 +7,7 @@
 
 先简单介绍下`Shadowsocks`协议，详细的工作原理可以参考[这篇博客](https://www.desgard.com/Shadowsocks-1/)：
 
-![shadowsocks](./media/patriotic-networ-2.png)
+![shadowsocks](./media/aliyun/patriotic-networ-2.png)
 
 当我们启动`shadowsocks client`时，实际上是启动了一个 `ss-local` 进程，左侧绿色的 `Socks5 Client` 可以是浏览器，也可以是`Telegram`等本地应用，它们和`ss-local`之间是使用 `socks` 协议进行通信。也就是说，浏览器像连接普通 `socks` 代理一样，连接到`ss-local`进程。`ss-local` 会将收到的请求，转发给`ss-server`，由`ss-server`完成实际的访问，并将结果通过`ss-local`返回给浏览器。`ss-server`部署在强国网络之外，和`ss-local`之间是加密传输，这样就实现了跨越长城。其实防火长城已经能够识别`Shadowsocks`协议，但发现我们是在努力学习先进技术，就先放我们过关。
 
@@ -88,7 +88,7 @@ $ curl https://www.google.com
 
 如果是在`macOS`上使用`Docker Desctop`，可以在`Preference`中的`Proxies`设置上一步启动的HTTP代理：
 
-![docker proxy](./media/docker-proxy.png)
+![docker proxy](./media/aliyun/docker-proxy.png)
 
 如果是`Linux`平台，请参考Docker的[官方文档](https://docs.docker.com/config/daemon/systemd/#httphttps-proxy)进行设置。
 
@@ -96,7 +96,7 @@ $ curl https://www.google.com
 
 为了将镜像同步到阿里云，首先需要在阿里云的[容器镜像服务控制台](https://cr.console.aliyun.com/cn-shenzhen/instances/namespaces)创建镜像的命名空间。
 
-![aliyun docker image namespace](./media/aliyun-docker-image-namespace.png)
+![aliyun docker image namespace](./media/aliyun/aliyun-docker-image-namespace.png)
 
 建议将仓库类型设置为“公开”，这样其他人也能搜索、下载到镜像。
 

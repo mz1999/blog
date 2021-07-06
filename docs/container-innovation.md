@@ -18,7 +18,7 @@
 
 内核代码常驻在内存中，被每个进程映射到它的**逻辑地址空间**：
 
-![2018-12-15 12.14.10](media/2018-12-15%2012.14.10.png)
+![2018-12-15 12.14.10](media/container/2018-12-15%2012.14.10.png)
 
 进程`逻辑地址空间`的最大长度与实际可用的物理内存数量无关，由`CPU`的字长决定。进程的`逻辑地址空间`划分为两个部分，分别称为`内核空间`和`用户空间`。`用户空间`是彼此独立的，而逻辑地址空间顶部的`内核空间`是被所有进程共享。
 
@@ -26,7 +26,7 @@
 
 实际上，操作系统的实现依赖 `CPU` 提供的功能。现代的`CPU`体系架构都提供几种特权级别，每个特权级别有各种限制。各级别可以看作是环，内环能够访问更多的功能，外环则较少，被称为[protection rings](https://en.wikipedia.org/wiki/Protection_ring)：
 
-![protection_rings](media/protection_rings.png)
+![protection_rings](media/container/protection_rings.png)
 
 
 
@@ -36,7 +36,7 @@
  
 在`用户态`禁止直接访问`内核态`，也就是说不同通过普通的函数调用方式调用内核代码，而必须使用**系统调用**陷入（`trap`）内核，完成从`用户态`到`内核态`的切换。内核首先检查进程是否允许执行想要的操作，然后代表进程执行所需的操作，完成后再返回到`用户态`。
 
-![2018-12-15 17.41.10](media/2018-12-15%2017.41.10.png)
+![2018-12-15 17.41.10](media/container/2018-12-15%2017.41.10.png)
 
 除了代表用户程序执行代码之外，内核还可以由硬件中断激活，然后在`中断上下文`中运行。另外除了普通进程，系统中还有`内核线程`在运行。`内核线程`不与任何特定的用户空间进程相关联。
 
@@ -64,11 +64,11 @@
 
 `Type-1`型`Hypervisor`的概念图：
 
-![2018-12-15 22.22.35](media/2018-12-15%2022.22.35.png)
+![2018-12-15 22.22.35](media/container/2018-12-15%2022.22.35.png)
 
 `Type-2`型`Hypervisor`的概念图：
 
-![2018-12-15 22.22.49](media/2018-12-15%2022.22.49.png)
+![2018-12-15 22.22.49](media/container/2018-12-15%2022.22.49.png)
 
 
 ### KVM & QEMU 
@@ -81,7 +81,7 @@
 
 相对应的，`QEMU`的另一种是虚拟化模式，它借助`KVM`完成处理器的虚拟化。由于和CPU的体系结构紧密关联，虚拟化模式能够带来更好的性能，限制是`Guest`必须使用和`Host`一样的CPU体系机构。这就是我们最常用到的虚拟化技术栈：`KVM/QEMU`
 
-![2018-12-16 11.16.37](media/2018-12-16%2011.16.37.png)
+![2018-12-16 11.16.37](media/container/2018-12-16%2011.16.37.png)
 
 `KVM` 和 `QEMU` 有两种交互方式：通过设备文件`/dev/kvm` 和通过内存映射页面。`QEMU` 和 `KVM`之间的大块数据传递会使用内存映射页面。`/dev/kvm`是`KVM`暴露的主要API，它支持一系列`ioctl`接口，`QEMU` 使用这些接口和`KVM`交互。`/dev/kvm` API分为三个层次：
 
@@ -97,7 +97,7 @@
 
 以`Intel` CPU为例，`VT-x`不仅增加了虚拟化相关的指令集，还将CPU的指令划分会两种模式：`root` 和 `non-root`。`hypervisor`运行在 `root` 模式，而`VM`运行在`non-root`模式。指令在`non-root`模式的运行速度和`root`模式几乎一样，除了不能执行一些涉及CPU全局状态切换的指令。
 
-![2018-12-16 15.03.35](media/2018-12-16%2015.03.35.png)
+![2018-12-16 15.03.35](media/container/2018-12-16%2015.03.35.png)
 
 `VMX`（Virtual Machine Extensions）是增加到`VT-x`中的指令集，主要有四个指令：
 
@@ -116,7 +116,7 @@
 
 **容器**的本质就是一个进程，只不过对它进行了`Linux Namesapce`隔离，让它“看”不到外面的世界，用`Cgroups`限制了它能使用的资源，同时利用系统调用`pivot_root`或`chroot`切换了进程的根目录，把容器镜像挂载为根文件系统`rootfs`。`rootfs`中不仅有要运行的应用程序，还包含了应用的所有依赖库，以及操作系统的目录和文件。`rootfs`打包了应用运行的完整环境，这样就保证了在开发、测试、线上等多个场景的一致性。
 
-![VM-Diagra](media/VM-Diagram.png)
+![VM-Diagra](media/docker/VM-Diagram.png)
 
 从上图可以看出，容器和虚拟机的最大区别就是，每个虚拟机都有独立的操作系统内核`Guest OS`，而容器只是一种特殊的进程，它们共享同一个操作系统内核。
 
@@ -134,13 +134,13 @@
 
 [OpenStack](https://www.openstack.org/)在2017年底发布的 `KataContainers` 项目，最初是由 `Intel ClearContainer` 和 `Hyper runV` 两个项目合并而产生的。在`Kubernetes`场景下，一个`Pod`对应于`Kata Containers`启动的一个轻量化虚拟机，`Pod`中的容器，就是运行在这个轻量级虚拟机里的进程。每个`Pod`都运行在独立的操作系统内核上，从而达到安全隔离的目的。
 
-![2018-12-16 18.16.08](media/2018-12-16%2018.16.08.png)
+![2018-12-16 18.16.08](media/container/2018-12-16%2018.16.08.png)
 
 可以看出，`KataContainers` 依赖 `KVM/QEMU`技术栈。
 
 amazon最近开源的[Firecracker](https://firecracker-microvm.github.io/)也是为了实现在 functions-based services 场景下，多租户安全隔离的容器。
 
-![firecracker_host_integration](media/firecracker_host_integration.png)
+![firecracker_host_integration](media/container/firecracker_host_integration.png)
 
 `Firecracker`同样依赖`KVM`，然后它没有用到`QEMU`，因为`Firecracker`本身就是`QEMU`的替代实现。`Firecracker`是一个比`QEMU`更轻量级的`VMM`，它只仿真了4个设备：`virtio-net`，`virtio-block`，`serial console`和一个按钮的键盘，仅仅用来停止`microVM`。理论上，`KataContainers`可以用`Firecracker`换掉它现在使用的`QEMU`，从而将 `Firecracker`整合进`Kubernetes`生态圈。
 
@@ -154,11 +154,11 @@ amazon最近开源的[Firecracker](https://firecracker-microvm.github.io/)也是
 
 Google 开源的[gVisor](https://github.com/google/gvisor)为了实现安全容器另辟蹊径，它用 Go 实现了一个运行在用户态的操作系统内核，作为容器运行的`Guest Kernel`，每个容器都依赖独立的操作系统内核，实现了容器间安全隔离的目的。
 
-![gvisor-Layers](media/gvisor-Layers.png)
+![gvisor-Layers](media/container/gvisor-Layers.png)
 
 虽然 `gVisor` 今年才开源，但它已经在[Google App Engine](https://cloud.google.com/appengine/) 和 [Google Cloud Functions](https://cloud.google.com/functions/docs/)运行了多年。
 
-![2018-12-16 19.35.38](media/2018-12-16%2019.35.38.png)
+![2018-12-16 19.35.38](media/container/2018-12-16%2019.35.38.png)
 
 
 `gVisor`作为运行应用的安全沙箱，扮演着`Virtual kernel`的角色。同时`gVisor` 包含了一个兼容[Open Container Initiative (OCI)](https://www.opencontainers.org/) 的运行时`runsc`，因此可以用它替换掉 Docker 的 `runc`，整合进`Kubernetes`生态圈，为`Kubernetes`带来另一种安全容器的实现方案。
@@ -174,7 +174,7 @@ Google 开源的[gVisor](https://github.com/google/gvisor)为了实现安全容�
 
 最后，对于像我这样没有读过Linux内核代码的后端程序员，`gVisor`是一个很好的窥探内核内部实现的窗口，又激起了我研究内核的兴趣。Twitter上看到有人和我有类似的看法：
 
-![2018-12-16 19.01.12](media/2018-12-16%2019.01.12-1.png)
+![2018-12-16 19.01.12](media/container/2018-12-16%2019.01.12-1.png)
 
 希望下次能分享`gVisor`深入研究系列。保持好奇心，Stay hungry. Stay foolish.
 

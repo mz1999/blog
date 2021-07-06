@@ -20,11 +20,11 @@
 
 如何测量自己的最大摄氧量呢？一般专业的心率表都会有这个指标。例如`Apple watch`可以通过你的体能训练，估算出最大摄氧量。
 
-![vo2max](./media/vo2max.jpg)
+![vo2max](./media/workout/vo2max.jpg)
 
 `iOS`系统自带的“健康”App里能查看到这个指标。
 
-![health](./media/health.jpeg)
+![health](./media/workout/health.jpeg)
 
 ## 合适强度的运动改善心肺功能
 

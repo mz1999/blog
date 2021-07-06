@@ -2,7 +2,7 @@
 
 [上一篇文章](./docker-network-bridge.md)我演示了`docker bridge`网络模型的实验，这次我将展示如何利用`Overlay 网络`实现跨主机容器的通信。
 
-![2018-11-11 18.18.03](media/2018-11-11%2018.18.03.png)
+![2018-11-11 18.18.03](media/docker/2018-11-11%2018.18.03.png)
 
 两个容器`docker1`和`docker2`分别位于节点`Node-1`和`Node-2`，如何实现容器的跨主机通信呢？一般来说有两种实现方式：
 
@@ -19,7 +19,7 @@
 
 `VXLAN` packet的结构：
 
-![vxlan](media/vxlan.png)
+![vxlan](media/docker/vxlan.png)
 
 我们可以看到，最内部是原始的二层网络包，外面加上一个`VXLAN header`，其中最重要的是`VNI`（VXLAN network identifier)字段，它用来唯一标识一个`VXLAN`。也就是说，使用不同的`VNI`来区分不同的虚拟二层网络。`VNI`有24位，基本够公用云厂商使用了。要知道原先用来网络隔离的虚拟局域网VLAN只支持4096个虚拟网络。
 
@@ -31,7 +31,7 @@
 
 参照[Flannel](https://github.com/coreos/flannel)的实现方案：
 
-![2018-11-11 20.35.36](media/2018-11-11%2020.35.36.png)
+![2018-11-11 20.35.36](media/docker/2018-11-11%2020.35.36.png)
 
 
 * **配置内核参数，允许IP forwarding**
@@ -218,11 +218,11 @@ sudo bridge fdb append 0e:e6:e6:5d:c2:da dev vxlan100 dst 192.168.31.192
 
 我们可以确认下执行结果：
 
-![2018-11-11 23.12.47](media/2018-11-11%2023.12.47.png)
+![2018-11-11 23.12.47](media/docker/2018-11-11%2023.12.47.png)
 
 `ARP`中已经记录了`Node-2`上容器IP对应的MAC地址。再看看`FDB`的情况：
 
-![2018-11-11 23.12.47](media/2018-11-11%2023.15.21.png)
+![2018-11-11 23.12.47](media/docker/2018-11-11%2023.15.21.png)
 
 根据最后一条新增规则，我们可以知道如何到达`Node-2`上“隧道”的出口`vxlan100`。“隧道”两端是使用UDP进行传输，即容器间通讯的二层网络包是靠UDP在宿主机之间通信。
 
@@ -270,7 +270,7 @@ sudo ip link del vxlan100
 
 Docker原生的[overlay driver](https://docs.docker.com/network/overlay/)底层也是使用`VXLAN`技术，但实现方案和[Flannel](https://github.com/coreos/flannel)略有不同：
 
-![2018-11-12 08.32.09](media/2018-11-12%2008.32.09.png)
+![2018-11-12 08.32.09](media/docker/2018-11-12%2008.32.09.png)
 
 我们可以看到，`vxlan100`被“插”在了虚拟交换机`br0`上，虚拟网络数据包从`br0`到`vxlan100`不是通过本机路由，而是`vxlan100`根据`FDB`直接进行了转发。
 

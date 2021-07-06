@@ -2,7 +2,7 @@
 
 用户在访问`Kubernetes`集群的`API server`时，访问请求需要经过身份验证、授权和准入控制这三个阶段的检查，才能真正到达`API`服务，如下图所示：
 
-![access-control-overview](./media/access-control-overview.svg)
+![access-control-overview](./media/k8s-auth/access-control-overview.svg)
 
 `Kubernetes`中的用户有两种类型：`service accounts` 和 `normal users`。`service accounts` 由 `Kubernetes`管理，它是`Pod`中的进程用于访问`API`服务的`account`，为`Pod`中的进程提供了一种身份标识。`normal users`是由外部系统管理，在`Kubernetes`中并没有对应的 `user` 对象，它为人类用户使用`kubectl`之类的工具访问`API`服务时提供身份标识。所有用户，不管是使用 `kubectl`、客户端lib、还是直接发起`REST`请求访问`API server`，都需要经过上述三个步骤的检查。
 
@@ -29,15 +29,15 @@
 
 那么`CA`的公钥如何安全的分发呢？首先，证书的签发是“链”式结构，给你签发证书的`CA`，它的证书可能还是由上一级`CA`机构签发的，这样一直往上追溯，最终会到某个“根证书”。如果“根证书”是被我们信任的，那么整条“链”上的证书都可信。
 
-![certificates in a chain](./media/ca-chain.png)
+![certificates in a chain](./media/k8s-auth/ca-chain.png)
 
 其次，操作系统都内置了“受信任的根证书”。我们拿到某个证书，如果它的根证书在系统的“受信任的根证书”列表中，那么这个证书就是可信的。例如知乎的证书：
 
-![zhihu crt](./media/zhihu-crt.png)
+![zhihu crt](./media/k8s-auth/k8s-auth/zhihu-crt.png)
 
 可以看到，它的根证书是[DigiCert Global Root CA](https://www.digicert.com/digicert-root-certificates.htm)，在操作系统的“受信任的根证书”列表中能找到它：
 
-![root ca](./media/root-ca.png)
+![root ca](./media/k8s-auth/root-ca.png)
 
 根证书是通过预装的方式完成的分发，因此安装来源不明的操作系统有风险，可能潜伏了非法的根证书。一旦被植入了非法的根证书，一整套的安全体系瞬间土崩瓦解。同时，不能随意向系统中添加可信任的根证书，你很难验证根证书的真伪，它已经是root，没人能为它做背书了。12306网站早期的根证书就不在操作系统的“受信任根证书”列表中，需要用户手工安装，在网上[引起轩然大波](https://www.williamlong.info/archives/3461.html)。最终12306在17年底的时候换成了Digicert的证书。
 
