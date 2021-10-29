@@ -33,7 +33,7 @@
 
 其次，操作系统都内置了“受信任的根证书”。我们拿到某个证书，如果它的根证书在系统的“受信任的根证书”列表中，那么这个证书就是可信的。例如知乎的证书：
 
-![zhihu crt](./media/k8s-auth/k8s-auth/zhihu-crt.png)
+![zhihu crt](./media/k8s-auth/zhihu-crt.png)
 
 可以看到，它的根证书是[DigiCert Global Root CA](https://www.digicert.com/digicert-root-certificates.htm)，在操作系统的“受信任的根证书”列表中能找到它：
 
