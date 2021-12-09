@@ -83,17 +83,17 @@ PTY 运行在用户区，更加安全和灵活，同时仍然保留了 TTY 驱�
 
 <img src="./media/tty/3.png">
 
-PTY 是通过打开特殊的设备文件 `/dev/ptmx` 创建，由一对双向的字符设备构成，称为 `PTY master` 和 `PYT slave`。
+PTY 是通过打开特殊的设备文件 `/dev/ptmx` 创建，由一对双向的字符设备构成，称为 `PTY master` 和 `PTY slave`。
 
 gnome-terminal 持有 `PTY master` 的文件描述符 `/dev/ptmx`。
-gnome-terminal 负责监听键盘事件，通过`PTY master`接收或发送字符到 `PYT slave`，还会在屏幕上绘制来自`PTY master`的字符输出。
+gnome-terminal 负责监听键盘事件，通过`PTY master`接收或发送字符到 `PTY slave`，还会在屏幕上绘制来自`PTY master`的字符输出。
 
-gnome-terminal 会 fork 一个 shell 子进程，并让 shell 持有 `PYT slave` 的设备文件 `/dev/pts/[n]`，shell 通过 `PYT slave` 接收字符，并输出处理结果。
+gnome-terminal 会 fork 一个 shell 子进程，并让 shell 持有 `PTY slave` 的设备文件 `/dev/pts/[n]`，shell 通过 `PTY slave` 接收字符，并输出处理结果。
 
-`PTY master` 和 `PYT slave` 之间是 TTY 驱动，会在 master 和 slave 之间复制数据，并进行会话管理和提供 **line discipline** 功能。
+`PTY master` 和 `PTY slave` 之间是 TTY 驱动，会在 master 和 slave 之间复制数据，并进行会话管理和提供 **line discipline** 功能。
 
 
-在 gnome-terminal 中执行 tty 命令，可以看到代表`PYT slave`的设备文件：
+在 gnome-terminal 中执行 tty 命令，可以看到代表`PTY slave`的设备文件：
 
 ```
 $ tty
@@ -115,15 +115,15 @@ F S   UID     PID    PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
 
 * 我们在桌面启动终端程序 `gnome-terminal`，它向操作系统请求一个`PTY master`，并把 GUI 绘制在显示器上
 * `gnome-terminal` 启动子进程 `bash`
-* `bash` 的标准输入、标准输出和标准错误都设置为 `PYT slave`
+* `bash` 的标准输入、标准输出和标准错误都设置为 `PTY slave`
 * `gnome-terminal` 监听键盘事件，并将输入的字符发送到`PTY master`
-* **line discipline** 收到字符，进行缓冲。只有当你按下回车键时，它才会把缓冲的字符复制到`PYT slave`。
+* **line discipline** 收到字符，进行缓冲。只有当你按下回车键时，它才会把缓冲的字符复制到`PTY slave`。
 * **line discipline** 在接收到字符的同时，也会把字符写回给`PTY master`。`gnome-terminal` 只会在屏幕上显示来自 `PTY master` 的东西。因此，**line discipline** 需要回传字符，以便让你看到你刚刚输入的内容。
-* 当你按下回车键时，TTY 驱动负责将缓冲的数据复制到`PYT slave`
-* bash 从标准输入读取输入的字符（例如 `ls -l` ）。注意，bash 在启动时已经将标准输入被设置为了`PYT slave`
+* 当你按下回车键时，TTY 驱动负责将缓冲的数据复制到`PTY slave`
+* bash 从标准输入读取输入的字符（例如 `ls -l` ）。注意，bash 在启动时已经将标准输入被设置为了`PTY slave`
 * bash 解释从输入读取的字符，发现需要运行 `ls`
-* bash fork 出 ls 进程。bash fork 出的进程拥有和 bash 相同的标准输入、标准输出和标准错误，也就是`PYT slave`
-* ls 运行，结果打印到标准输出，也就是`PYT slave`
+* bash fork 出 ls 进程。bash fork 出的进程拥有和 bash 相同的标准输入、标准输出和标准错误，也就是`PTY slave`
+* ls 运行，结果打印到标准输出，也就是`PTY slave`
 * TTY 驱动将字符复制到`PTY master`
 * `gnome-terminal` 循环从 `PTY master` 读取字节，绘制到用户界面上。
 
@@ -140,11 +140,11 @@ Shell是用户空间的应用程序，通常由 terminal fork出来，是 termin
 内核将使用 TTY 驱动来处理 terminal 和 Shell 之间的通信。**line discipline** 是 TTY 驱动的一个逻辑组件。**line discipline** 主要有以下功能：
 
 * 当用户输入时，字符会被回传到`PTY master`
-* **line discipline** 会在内存中缓冲这些字符。当用户按回车键时，它才将这些字符发送到`PYT slave`
+* **line discipline** 会在内存中缓冲这些字符。当用户按回车键时，它才将这些字符发送到`PTY slave`
 * **line discipline** 可以拦截处理一些特殊的功能键，例如：
-  * 当用户按 `CTRL+c` 时，它向连接到 `PYT slave` 的进程发送 `kill -2（SIGINT）` 信号
+  * 当用户按 `CTRL+c` 时，它向连接到 `PTY slave` 的进程发送 `kill -2（SIGINT）` 信号
   * 当用户按 `CTRL+w` 时，它删除用户输入的最后一个字
-  * 当用户按 `CTRL+z` 时，它向连接到 `PYT slave` 的进程发送 `kill -STOP`信号
+  * 当用户按 `CTRL+z` 时，它向连接到 `PTY slave` 的进程发送 `kill -STOP`信号
   * 当用户按退格键时，它从缓冲区中删除该字符，并向`PTY master`发送删除最后一个字符的指令
 
 我们可以使用命令行工具 `stty` 查询和配置 TTY，包括 **line discipline** 规则。在 terminal 执行 `stty -a` 命令：
