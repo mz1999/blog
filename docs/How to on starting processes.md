@@ -32,15 +32,21 @@ C standard library has the next functions (on Debian-based distros `apt-get down
 * `system(command)` (`man 3 system`) - launches a `shell` process to execute provided `command`. The calling process is blocked till the end of the execution of the underlying `shell` process. `system()` returns an exit code of the shell process. Let's have a look on the [implementation](http://www.retro11.de/ouxr/211bsd/usr/src/lib/libc/gen/system.c.html) of this function in the stdlib: 
 
 ```c
-int system(char \*command) { // ... skip signals tricks for simplicity ...
+int system(char *command) { 
+    // ... skip signals tricks for simplicity ...
     
-    switch(pid = vfork()) { case -1: // error // ... case 0: // child execl("/bin/sh", "sh", "-c", command, (char \*)NULL); \_exit(127); // will be called only if execl() returns, i.e. a syscall faield. }
+    switch(pid = vfork()) { 
+        case -1: // error 
+            // ... 
+        case 0: // child 
+            execl("/bin/sh", "sh", "-c", command, (char *)NULL); 
+            _exit(127); // will be called only if execl() returns, i.e. a syscall faield.
+    }
     
     // ... skip signals tricks for simplicity ...
     
-    waitpid(pid, (int \*)&pstat, 0); // waiting for the child process, i.e. shell. return pstat.w\_status;
-    
-
+    waitpid(pid, (int *)&pstat, 0); // waiting for the child process, i.e. shell.
+    return pstat.w_status;
 }
 ```
 
@@ -81,8 +87,6 @@ FILE * popen(char *program, char *type)
         close(pdes[0]);
     }
     return result;
-    
-
 }
 ```
     
