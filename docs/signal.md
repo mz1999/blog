@@ -35,7 +35,8 @@ $ kill -l
 使用 `man 7 signal` 命令查看系统对每个信号作用的描述：
 
 ```
-Signal      Standard   Action   Comment       ────────────────────────────────────────────────────────────────────────
+Signal      Standard   Action   Comment       
+────────────────────────────────────────────────────────────────────────
 SIGABRT      P1990      Core    Abort signal from abort(3)
 SIGALRM      P1990      Term    Timer signal from alarm(2)
 SIGBUS       P2001      Core    Bus error (bad memory access)
@@ -64,9 +65,9 @@ SIGILL       P1990      Core    Illegal Instruction
 
 一旦有信号产生，进程对它的处理都有下面三个选择。
 
-1. 执行缺省操作（Default）。Linux 为每个信号都定义了一个缺省的行为。例如，信号 SIGKILL 的缺省操作是 Term，也就是终止进程的意思。信号 SIGQUIT 的缺省操作是 Core，即终止进程后，通过 Core Dump 将当前进程的运行状态保存在文件里面。
-2. 捕捉信号（Catch）。这个是指让用户进程可以注册自己针对这个信号的处理函数。当信号发生时，就执行我们注册的信号处理函数。
-3. 忽略信号（Ignore）。当我们不希望处理某些信号的时候，就可以忽略该信号，不做任何处理。
+1. **执行缺省操作（Default）**。Linux 为每个信号都定义了一个缺省的行为。例如，信号 SIGKILL 的缺省操作是 Term，也就是终止进程的意思。信号 SIGQUIT 的缺省操作是 Core，即终止进程后，通过 Core Dump 将当前进程的运行状态保存在文件里面。
+2. **捕捉信号（Catch）**。这个是指让用户进程可以注册自己针对这个信号的处理函数。当信号发生时，就执行我们注册的信号处理函数。
+3. **忽略信号（Ignore）**。当我们不希望处理某些信号的时候，就可以忽略该信号，不做任何处理。
 
 有两个信号例外，对于 **SIGKILL** 和 **SIGSTOP** 这个两个信号，进程是无法捕捉和忽略，它们用于在任何时候中断或结束某一进程。**SIGKILL** 和 **SIGSTOP** 为内核和超级用户提供了删除任意进程的特权。
 
@@ -157,6 +158,7 @@ Action 列是信号的缺省行为，主要有如下几个：
 
 有一些信号在 TTY 终端做了键盘按键绑定，例如 `CTRL+c`  会向终端上运行的前台进程发送  SIGINT 信号。
 
+---
 ### SIGHUP
 
 运行在终端中，由 bash 启动的进程，都是 bash 的子进程。终端退出结束时会向 bash 的每一个子进程发送 **SIGHUP** 信号。由于 **SIGHUP** 的缺省行为是 Term，因此，即使运行在后台的进程也会和终端一起结束。
@@ -169,6 +171,7 @@ $ nohup command >cmd.log 2>&1 &
 
 这样，即使我们退出了终端，运行在后台的程序会忽视 **SIGHUP** 信号而继续运行。由于作为父进程的 bash 进程已经结束，因此 `/sbin/init` 就成为孤儿进程新的父进程。
 
+---
 ### SIGINT, SIGQUIT, SIGTERM 和 SIGKILL
 
 **SIGTERM** 和 **SIGKILL** 是通用的终止进程请求，**SIGINT** 和 **SIGQUIT** 是专门用于来自终端的终止进程请求。他们的关键不同点是：**SIGINT** 和 **SIGQUIT** 可以是用户在终端使用快捷键生成的，而 **SIGTERM** 和 **SIGKILL** 必须由另一个程序以某种方式生成（例如通过 kill 命令）。
@@ -193,6 +196,7 @@ core dump 文件缺省保存在 `/var/lib/systemd/coredump` 目录下。
 
 例如 docker 在停止容器的时候，先给容器里的1号进程发送 **SIGTERM**，如果不起作用，那么等待30秒后会会发送 **SIGKILL**，保证容器最终会被停止。
 
+---
 ###  SIGSTOP 、 SIGTSTP 和 SIGCONT
 
 **SIGSTOP** 和 **SIGTSTP** 这两个信号都是为了暂停一个进程，但 **SIGSTOP**  是特权信息，不能被捕获或忽略。
@@ -203,11 +207,14 @@ core dump 文件缺省保存在 `/var/lib/systemd/coredump` 目录下。
 
 Linux 使用他们进行作业控制，让你能够手动干预和停止正在运行的应用程序，并在未来某个时间恢复程序的执行。
 
+---
 ### SIGTTOU 和 SIGTTIN
 
 Linux 系统中可以有多个会话（**session**），每个会话可以包含多个进程组，每个进程组可以包含多个进程。
 
 会话是用户登录系统到退出的所有活动，从登录到结束前创建的所有进程都属于这次会话。会话有一个前台进程组，还可以有一个或多个后台进程组。只有前台进程可以从终端接收输入，也只有前台进程才被允许向终端输出。如果一个后台作业中的进程试图进行终端读写操作，终端会向整个作业发送 **SIGTTOU** 或 **SIGTTIN** 信号，默认的行为是暂停进程。
+
+---
 
 ## JVM 对信号的处理
 
