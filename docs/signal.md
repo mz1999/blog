@@ -17,13 +17,13 @@
 
 ```
 $ kill -l
- 1) SIGHUP	    2) SIGINT	    3) SIGQUIT	    4) SIGILL	    5) SIGTRAP
- 6) SIGABRT	    7) SIGBUS	    8) SIGFPE	    9) SIGKILL	    10) SIGUSR1
-11) SIGSEGV	    12) SIGUSR2	    13) SIGPIPE	    14) SIGALRM	    15) SIGTERM
-16) SIGSTKFLT	17) SIGCHLD	    18) SIGCONT	    19) SIGSTOP	    20) SIGTSTP
-21) SIGTTIN	    22) SIGTTOU	    23) SIGURG	    24) SIGXCPU	    25) SIGXFSZ
-26) SIGVTALRM	27) SIGPROF	    28) SIGWINCH	29) SIGIO	    30) SIGPWR
-31) SIGSYS	    34) SIGRTMIN	35) SIGRTMIN+1	36) SIGRTMIN+2	37) SIGRTMIN+3
+ 1) SIGHUP	 2) SIGINT	 3) SIGQUIT	 4) SIGILL	 5) SIGTRAP
+ 6) SIGABRT	 7) SIGBUS	 8) SIGFPE	 9) SIGKILL	10) SIGUSR1
+11) SIGSEGV	12) SIGUSR2	13) SIGPIPE	14) SIGALRM	15) SIGTERM
+16) SIGSTKFLT	17) SIGCHLD	18) SIGCONT	19) SIGSTOP	20) SIGTSTP
+21) SIGTTIN	22) SIGTTOU	23) SIGURG	24) SIGXCPU	25) SIGXFSZ
+26) SIGVTALRM	27) SIGPROF	28) SIGWINCH	29) SIGIO	30) SIGPWR
+31) SIGSYS	34) SIGRTMIN	35) SIGRTMIN+1	36) SIGRTMIN+2	37) SIGRTMIN+3
 38) SIGRTMIN+4	39) SIGRTMIN+5	40) SIGRTMIN+6	41) SIGRTMIN+7	42) SIGRTMIN+8
 43) SIGRTMIN+9	44) SIGRTMIN+10	45) SIGRTMIN+11	46) SIGRTMIN+12	47) SIGRTMIN+13
 48) SIGRTMIN+14	49) SIGRTMIN+15	50) SIGRTMAX-14	51) SIGRTMAX-13	52) SIGRTMAX-12
@@ -57,7 +57,7 @@ SIGILL       P1990      Core    Illegal Instruction
 
 我们知道，硬件中断也是一种内核的**异步事件处理方式**。当外部设备出现一个必须由 CPU 处理的事件，如键盘敲击、数据到达网卡等，内核会收到中断通知，暂时打断当前程序的执行，跳转到该中断类型对应的中断处理程序。中断处理程序是由 BIOS 和操作系统在系统启动过程中预先注册在内核中的。
 
-中断和信号通知都是在内核产生。中断是完全在内核里完成处理，而信号的处理则是在用户态完成的。也就是说，内核只是将信号保存在进程相关的数据结构里面，在执行信号处理程序之前，需要从内核态切换到用户态，执行完信号处理程序之后，又回到内核态，再恢复进程正常的运行。
+中断和信号通知都是在内核产生。中断是完全在内核里完成处理，而**信号的处理则是在用户态完成的**。也就是说，内核只是将信号保存在进程相关的数据结构里面，在执行信号处理程序之前，需要从内核态切换到用户态，执行完信号处理程序之后，又回到内核态，再恢复进程正常的运行。
 
 可以看出，中断和信号的严重程度不一样。信号影响的是一个进程，信号处理出了问题，最多是这个进程被干掉。而中断影响的是整个系统，一旦中断处理程序出了问题，可能整个系统都会挂掉。
 
