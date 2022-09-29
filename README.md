@@ -1,4 +1,6 @@
-# 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
+## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
+
+<a href="<https://mazhen.tech"><img src="https://mazhen.tech/mazhen.jpg" width="128" height="128"/> </a>
 
 * [Rust 异步编程笔记](./docs/rust-async.md)
 * [BookKeeper实现分析](./docs/bookkeeper.md)
