@@ -2,6 +2,7 @@
 
 <a href="<https://mazhen.tech"><img src="https://mazhen.tech/mazhen.jpg" width="128" height="128"/> </a>
 
+* [Pin<Box<dyn Future<>>>解析](./docs/pin-box-future.md)
 * [impl Trait 的使用](./docs/impl_trait.md)
 * [Rust 异步编程笔记](./docs/rust-async.md)
 * [BookKeeper实现分析](./docs/bookkeeper.md)
