@@ -1,5 +1,10 @@
-
-# 在国产飞腾平台上编译安装nginx
+---
+title: "在国产飞腾平台上编译安装nginx"
+date: 2019-04-02T09:45:05+08:00
+draft: false
+tags: [linux, nginx]
+categories: [tech]
+---
 
 [飞腾芯片](http://www.phytium.com.cn) + [银河麒麟OS](http://www.kylinos.cn/)是目前国产自主可控市场上的主流基础平台。飞腾芯片是[aarch64](https://en.wikipedia.org/wiki/ARM_architecture#AArch64)架构，是支持64位的[ARM](https://en.wikipedia.org/wiki/ARM_architecture)芯片。银河麒麟是基于Ubuntu的发行版。因此可以认为`飞腾芯片` + `银河麒麟OS`相当于 `ARM64` + `Ubuntu`。
 

@@ -1,6 +1,15 @@
 ## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
 
-<a href="<https://mazhen.tech"><img src="https://mazhen.tech/mazhen.jpg" width="128" height="128"/> </a>
+* [应用服务器整合第三方连接池](./docs/application_datasource.md)
+* [Nginx的模块化设计](./docs/nginx-modules.md)
+* [在macOS上使用VSCode调试NGINX](./docs/nginx-macos-debug.md)
+* [Nginx架构基础](./docs/nginx-architecture.md)
+* [Nginx反向代理配置](./docs/nginx-reverse-proxy.md)
+* [Nginx静态资源服务的配置](./docs/nginx-static-resource-service.md)
+* [Nginx的基本使用](./docs/nginx-usage.md)
+* [Nginx的编译和安装](./docs/nginx-compile-install.md)
+
+---
 
 * [Pin<Box<dyn Future<>>>解析](./docs/pin-box-future.md)
 * [impl Trait 的使用](./docs/impl_trait.md)
