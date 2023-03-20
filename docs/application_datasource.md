@@ -1,6 +1,8 @@
 # 应用服务器整合第三方连接池
 
-数据库连接池是应用服务器的基本功能，但有时用户因为性能、监控等需求，想使用第三方的连接池。如果只是使用第三方连接池管理数据库连接，那么直接在应用中引入就可以了，但如果用户同时还需要应用服务器的分布式事务和安全服务，就没那么简单了。首先了解一下基本概念。
+数据库连接池是应用服务器的基本功能，但有时用户因为性能、监控等需求，想使用第三方的连接池。如果只是使用第三方连接池管理数据库连接，那么直接在应用中引入就可以了，但如果用户同时还需要应用服务器的分布式事务和安全服务，就没那么简单了。
+
+为了讲清楚，首先需要了解一下 JDBC 基本概念。
 
 ## Connection
 
@@ -18,7 +20,7 @@ JDBC 还定义了 `DataSource` 接口的两个重要扩展：
 
 从 **DriverManager** 和 **DataSource** 都可以获得 **Connection**。
 
-**DataSource**、**ConnectionPoolDataSource** 和 **XADataSource** 都继承自 **CommonDataSource**，但它们之间没有继承关系。
+**DataSource**、**ConnectionPoolDataSource** 和 **XADataSource** 都继承自 **CommonDataSource**，但**它们之间没有继承关系**。
 
 从 **ConnectionPoolDataSource** 获得的是 **PooledConnection**，**PooledConnection** 并没有继承 **Connection**，但可以获得**Connection**。
 
@@ -44,21 +46,21 @@ JDBC 还定义了 `DataSource` 接口的两个重要扩展：
 
 以连接池为例，JDBC driver 提供了 **ConnectionPoolDataSource** 的实现，应用服务器使用它来构建和管理连接池。客户端在使用相同的 JNDI 和 DataSource API 的同时获得更好的性能和可扩展性。
 
-<img src="https://cdn.mazhen.tech/images/202303101503461.png" alt="connection pool" style="zoom: 33%;" />
+![connection pool](https://cdn.mazhen.tech/images/202303101503461.png)
 
 应用服务器维护维护一个从 **ConnectionPoolDataSource** 对象返回的 **PooledConnection** 对象池。应用服务器的实现还可以向 PooledConnection 对象注册**ConnectionEventListener**，以获得连接事件的通知，如连接关闭和错误事件。
 
-<img src="https://cdn.mazhen.tech/images/202303160947605.png" alt="ConnectionPoolDataSource" style="zoom: 50%;" />
+![ConnectionPoolDataSource](https://cdn.mazhen.tech/images/202303160947605.png)
 
 我们看到，应用程序客户端通过 JNDI 查找一个 DataSource 对象，并请求从 DataSource 获得一个连接。当连接池没有可用连接时，DataSource 的实现从 JDBC driver 的 ConnectionPoolDataSource 中请求一个新的 PooledConnection 。应用服务器的 DataSource 实现会向 PooledConnection 注册一个ConnectionEventListener，随后获得一个新的 Connection 对象。应用客户端在完成操作后调用 `Connection.close()`，会生成一个 ConnectionEvent 实例，该实例会返回给应用服务器的数据源实现。在收到连接关闭的通知后，应用服务器可以将连接对象放回连接池中。
 
-注意 **ConnectionPoolDataSource** 本身不是连接池，它是供连接池使用的 datasource。一般 JDBC driver 提供的 ConnectionPoolDataSource 实现并没有内置连接池功能，需要配合应用服务器或其他第三方连接池一起使用。可以参考  [MySQL Connector 的文档](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-usagenotes-j2ee-concepts-connection-pooling.html)。
+注意 **ConnectionPoolDataSource 本身不是连接池**，它是 driver 提供给应用服务器的接口契约，意思是你从 ConnectionPoolDataSource 获得的PooledConnection可以放心的缓存起来，同时连接关闭的时候，driver 会发送事件通知给应用服务器，真正的关闭连接还是放回连接池，由你自己决定。 一般 JDBC driver 提供的 ConnectionPoolDataSource 实现并没有内置连接池功能，需要配合应用服务器或其他第三方连接池一起使用。可以参考  [MySQL Connector](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-usagenotes-j2ee-concepts-connection-pooling.html)的文档。
 
 ### XADataSource
 
 同样，如果想要分布式事务支持，应用服务器的 DataSource  需要依赖 driver 提供的 **XADataSource** 实现，同时通过 XAResource 和 Transaction Manager 交互。
 
-<img src="https://cdn.mazhen.tech/images/202303101754420.png" alt="XADataSource" style="zoom:33%;" />
+![XADataSource](https://cdn.mazhen.tech/images/202303101754420.png)
 
 **XADataSource** 对象返回 **XAConnection** ，该对象扩展了 PooledConnection ，增加了对分布式事务的参与能力。应用服务器的 DataSource 实现在XAConnection 对象上调用 getXAResource() 以获得传递给事务管理器的 **XAResource** 对象。事务管理器使用 XAResource 来管理分布式事务。
 
@@ -95,18 +97,22 @@ JTA 规范要求连接必须能够同时处理多个事务，这个功能被称�
 
 ![JTA Transaction](https://cdn.mazhen.tech/images/202303102116711.png)
 
-另外，应用服务器都实现了对 JCA（Java EE Connector Architecture）规范的支持。JCA 将应用服务器的事务、安全和连接管理等功能，与事务资源管理器集成，定义了一个标准的 SPI(Service Provider Interface) ，因此，一般应用服务器的连接池都在 JCA 中实现，JDBC DataSource 作为一种资源，被 JCA 统一管理。
+另外，应用服务器都实现了对 **JCA（Java EE Connector Architecture）**规范的支持。JCA 将应用服务器的事务、安全和连接管理等功能，与事务资源管理器集成，定义了一个标准的 SPI(Service Provider Interface) ，因此，一般应用服务器的连接池都在 JCA 中实现，JDBC DataSource 作为一种资源，被 JCA 统一管理。
 
-<img src="https://cdn.mazhen.tech/images/202303102216362.png" alt="jca" style="zoom:50%;" />
+![jca](https://cdn.mazhen.tech/images/202303102216362.png)
 
-由于外部连接池不能感知事务的存在，所以没办法做到事务对连接的独占，因此应用服务器不能直接整合第三方的连接池。
+而外部连接池不能感知事务的存在，所以没办法做到事务对连接的独占，因此应用服务器不能简单的直接整合第三方连接池。
 
 ## 解决方案
 
-如果外部连接池实现了 XADataSource，那么我们可以把它当作普通的  JDBC driver，在配置应用服务器的 DataSource 时使用。需要注意两点：
+如果外部连接池实现了 XADataSource，那么我们可以把它当作普通的  JDBC driver，在配置应用服务器的 DataSource 时使用。需要注意几点：
 
 * 为外部连接池配置真正的 JDBC driver 时，要使用 driver的 XADataSource 作为连接的获取方式
 
-* 外部连接池作为特殊的 driver，已经内置了池化功能，连接池的相关参数最好和应用服务器的DataSource保持一致，因为连接池的实际大小受到外部连接池的约束。
+* 外部连接池作为特殊的 driver，已经内置了池化功能，连接池的相关参数最好和应用服务器的DataSource保持一致，因为连接池的实际大小受到外部连接池的约束
 
-这个解决方案的问题是，应用服务器和外部连接池都对连接做的池化，实际上是建立了两个连接池，存在很大的浪费。变通的做法是，设置应用服务器连接池的空闲连接数为0，尽可能的将连接释放回外部连接池。当然更优的做法是，对外部连接池进行适当改造，让它能感知事务的存在，例如 [Agroal](https://github.com/agroal/agroal) 连接池能够和 Transaction Manager进行整合。
+* 外部连接池在使用前，一般需要进行初始化，同时，应用服务器在关闭 DataSource 时，也要关闭内置的外部连接池，避免连接泄漏。
+
+这个解决方案的问题是，应用服务器和外部连接池都对连接做了池化，实际上是建立了两个连接池，存在较大的浪费。一种变通的做法是，设置应用服务器连接池的空闲连接数为0，这样应用服务器的连接池不会持有连接，连接在使用完毕后会释放到外部连接池。连接由外部连接池管理，同时经过应用服务器 datasource的包装，能够享受应用服务器内置的事务和安全服务。
+
+当然更优的做法是，对外部连接池进行适当改造，让它能感知事务的存在，例如 [Agroal](https://github.com/agroal/agroal) 连接池能够被注入Transaction Manager，通过 Transaction Manager 感知到事务的存在，做到事务对连接的独占。
