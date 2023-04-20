@@ -1,6 +1,10 @@
 ## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
 
+* [Java EE应用服务器的事务管理](./docs/application_server_transaction.md)
 * [应用服务器整合第三方连接池](./docs/application_datasource.md)
+
+---
+
 * [Nginx的模块化设计](./docs/nginx-modules.md)
 * [在macOS上使用VSCode调试NGINX](./docs/nginx-macos-debug.md)
 * [Nginx架构基础](./docs/nginx-architecture.md)
