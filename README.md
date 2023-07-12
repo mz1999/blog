@@ -1,5 +1,6 @@
 ## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
 
+* [在macOS上编译和调试OpenJDK](./docs/build_jdk_on_macos.md)
 * [Java EE应用服务器的事务管理](./docs/application_server_transaction.md)
 * [应用服务器整合第三方连接池](./docs/application_datasource.md)
 
