@@ -1,5 +1,7 @@
 ## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
 
+* [GlassFish Startup Process](./docs/glassfish_startup_en.md)
+* [GlassFish 启动流程](./docs/glassfish_startup_cn.md)
 * [在macOS上编译和调试OpenJDK](./docs/build_jdk_on_macos.md)
 * [Java EE应用服务器的事务管理](./docs/application_server_transaction.md)
 * [应用服务器整合第三方连接池](./docs/application_datasource.md)
