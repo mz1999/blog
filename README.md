@@ -1,5 +1,6 @@
 ## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
 
+* [Incomplete List of Computer Science Learning Resources for College Students](./docs/cs_resources_for_students.md)
 * [Jakarta EE应用服务器的事务处理](./docs/jakarta_ee_transaction.md)
 * [GlassFish Startup Process](./docs/glassfish_startup_en.md)
 * [GlassFish 启动流程](./docs/glassfish_startup_cn.md)
