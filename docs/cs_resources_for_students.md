@@ -19,7 +19,8 @@
 ## Linux
 
 * 极客时间：[Linux 实战技能 100 讲](https://time.geekbang.org/course/intro/100029601)
-
+* [Efficient Linux at the Command Line](https://www.oreilly.com/library/view/efficient-linux-at/9781098113391/)
+* [像黑客一样使用命令行](https://selfhostedserver.com/usingcli)
 * [Linux是怎么工作的](https://book.douban.com/subject/35768243/)
 * [Linux技术内幕](https://book.douban.com/subject/26931513/)
 * [Linux Foundation](https://www.linuxfoundation.org/) 的认证考试 [LFCA](https://training.linuxfoundation.org/certification/certified-it-associate/#) 和 [LFCS](https://training.linuxfoundation.org/certification/linux-foundation-certified-sysadmin-lfcs/#)
@@ -28,6 +29,7 @@
 * 极客时间：[Linux 内核技术实战课](https://time.geekbang.org/column/intro/100058001)
 * 极客时间：[编程高手必学的内存知识](https://time.geekbang.org/column/intro/100094901)
 * 极客时间：[容器实战高手课](https://time.geekbang.org/column/intro/100063801)
+* [Learning Modern Linux](https://www.oreilly.com/library/view/learning-modern-linux/9781098108939/)
 
 ## 网络
 
