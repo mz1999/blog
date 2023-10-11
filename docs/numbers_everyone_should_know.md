@@ -18,7 +18,7 @@
 
 [Brown University](https://www.brown.edu/) 的 [Fundamentals of Computer Systems](https://cs.brown.edu/courses/csci0300/2023/index.html)课程有专门介绍计算机的[存储层次结构](https://cs.brown.edu/courses/csci0300/2023/notes/l12.html)：以**大小和速度**为标准，将不同类型的存储设备从**最快但容量最小**到**最慢但容量最大**进行排列。
 
-![storage hierarchy](https://cs.brown.edu/courses/csci0300/2023/notes/assets/l10-storage-hierarchy.png)
+![storage hierarchy](https://raw.githubusercontent.com/mz1999/material/master/images/202310111641125.png)
 
 存储层次结构这样设计是基于不同存储设备的**成本和性能特点**。**内存成本高但访问速度快**，而**硬盘成本低但访问速度慢**。所以采用这种层次结构可以在**平衡成本和性能**的前提下更好地利用各种存储设备。
 
