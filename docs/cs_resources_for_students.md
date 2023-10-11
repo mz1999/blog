@@ -30,6 +30,7 @@
 * 极客时间：[编程高手必学的内存知识](https://time.geekbang.org/column/intro/100094901)
 * 极客时间：[容器实战高手课](https://time.geekbang.org/column/intro/100063801)
 * [Learning Modern Linux](https://www.oreilly.com/library/view/learning-modern-linux/9781098108939/)
+* [交互式的 Linux 内核地图](https://makelinux.github.io/kernel/map/)
 
 ## 网络
 
