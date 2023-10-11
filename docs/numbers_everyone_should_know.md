@@ -19,6 +19,7 @@
 [Brown University](https://www.brown.edu/) 的 [Fundamentals of Computer Systems](https://cs.brown.edu/courses/csci0300/2023/index.html)课程有专门介绍计算机的[存储层次结构](https://cs.brown.edu/courses/csci0300/2023/notes/l12.html)：以**大小和速度**为标准，将不同类型的存储设备从**最快但容量最小**到**最慢但容量最大**进行排列。
 
 ![storage hierarchy](https://cs.brown.edu/courses/csci0300/2023/notes/assets/l10-storage-hierarchy.png)
+
 存储层次结构这样设计是基于不同存储设备的**成本和性能特点**。**内存成本高但访问速度快**，而**硬盘成本低但访问速度慢**。所以采用这种层次结构可以在**平衡成本和性能**的前提下更好地利用各种存储设备。
 
 在2010年，Google 的 [Jeff Dean](https://en.wikipedia.org/wiki/Jeff_Dean_(computer_scientist)) 在斯坦福大学发表了一次精彩的演讲 [Designs, Lessons and Advice from Building Large Distributed Systems](https://www.cs.cornell.edu/projects/ladis2009/talks/dean-keynote-ladis2009.pdf)，在演讲中总结了计算机工程师应该了解的一些重要数字：
