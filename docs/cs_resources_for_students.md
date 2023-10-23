@@ -7,6 +7,7 @@
 ## 计算机原理/体系结构
 
 * 极客时间：[深入浅出计算机组成原理](https://time.geekbang.org/column/intro/100026001)
+* [Computer Systems: A Programmer's Perspective](http://csapp.cs.cmu.edu/3e/home.html) 从程序员的角度学习计算机系统，了解计算机系统的各个方面，包括硬件、操作系统、编译器和网络。这本书涵盖了数据表示、C语言程序的机器级表示、处理器架构、程序优化、内存层次结构、链接、异常控制流（异常、中断、进程和Unix信号）、虚拟内存和内存管理、系统级I/O、基本的网络编程和并发编程等概念。这些概念由一系列有趣且实践性强的实验室作业支持。
 * [编码](https://book.douban.com/subject/4822685/)  Code: The Hidden Language of Computer Hardware and Software
 * [Computer Science from the Bottom Up](https://bottomupcs.com/index.html) 采用“从下到上”的方法,从最基础的二进制、数据表示开始,逐步深入计算机内部工作原理,目的是帮助读者真正掌握计算机科学的基础知识。
 
