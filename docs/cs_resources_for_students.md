@@ -70,6 +70,15 @@
 * [计算机教育中缺失的一课](https://missing-semester-cn.github.io/)
 * [Developer Roadmaps](https://roadmap.sh/) 为开发者提供学习路线图和指南
 
+## 技术面试
+
+* [Leetcode](https://leetcode.com/) 一个广受欢迎的在线编程题库
+* [Cracking the coding interview book](https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/0984782850) 一本深受程序员喜爱的面试指南书
+* [Neetcode](https://neetcode.io/) 另一个在线编程练习平台
+* [interviewing.io](https://interviewing.io/) 一个提供模拟技术面试的平台
+* [Pramp](https://www.pramp.com/) 一个模拟面试平台
+* [Meetapro](https://www.meetapro.com/) 一个可以找到专业人士进行模拟面试的网站
+
 ## iOS开发
 
 * [iOS & Swift - The Complete iOS App Development Bootcamp](https://www.udemy.com/course/ios-13-app-development-bootcamp/)
