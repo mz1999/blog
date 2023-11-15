@@ -70,6 +70,7 @@
 * YouTube视频课：[Crash Course Computer Science Preview](https://www.youtube.com/watch?v=tpIctyqH29Q&list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo)
 * [计算机教育中缺失的一课](https://missing-semester-cn.github.io/)
 * [Developer Roadmaps](https://roadmap.sh/) 为开发者提供学习路线图和指南
+* [Online Coding Classes – For Beginners](https://www.freecodecamp.org/news/online-coding-classes-for-beginners-2022-guide/)  3000 小时的免费课程，涵盖了编程涉及到的方方面面
 
 ## 技术面试
 
