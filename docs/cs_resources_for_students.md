@@ -88,6 +88,8 @@
 * [Stanford CS193p - Developing Apps for iOS](https://cs193p.sites.stanford.edu/2023)
 * [iOS and SwiftUI for Beginners](https://www.kodeco.com/ios/paths/learn)
 * [Meta iOS Developer](https://www.coursera.org/professional-certificates/meta-ios-developer)
+* [Develop in Swift Tutorials](https://developer.apple.com/tutorials/develop-in-swift-tutorials) 苹果官方教程
+* [SwiftUI Tutorials](https://developer.apple.com/tutorials/swiftui) 苹果官方教程
 
 ## 计算机科学史
 
