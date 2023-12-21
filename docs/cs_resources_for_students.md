@@ -45,6 +45,7 @@
 ## 编程
 
 * [C专家编程](https://book.douban.com/subject/35218533/) Expert C Programming: Deep C Secrets
+* [Online Compiler, Visual Debugger](https://pythontutor.com/) 独特的逐步可视化调试工具，强烈推荐！
 * 极客时间：[深入 C 语言和程序运行原理](https://time.geekbang.org/column/intro/100100701)
 * [Linux/UNIX系统编程手册](Linux/UNIX系统编程手册) The Linux Programming Interface: A Linux and UNIX System Programming Handbook
 * [UNIX环境高级编程](https://book.douban.com/subject/25900403/) Advanced Programming in the UNIX Environment

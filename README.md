@@ -3,7 +3,7 @@
 * [深入探索 perf CPU Profiling 实现原理](./docs/perf_cpu_profiling.md)
 * [从源码构建 perf](./docs/build_perf_from_source.md)
 * [Latency Numbers Every Programmer Should Know](./docs/numbers_everyone_should_know.md)
-* [Incomplete List of Computer Science Learning Resources for College Students](./docs/cs_resources_for_students.md)
+* [Incomplete List of Computer Science Learning Resources for College Students](./docs/cs_resources_for_students.md) [**长期更新**]
 * [Jakarta EE应用服务器的事务处理](./docs/jakarta_ee_transaction.md)
 * [GlassFish Startup Process](./docs/glassfish_startup_en.md)
 * [GlassFish 启动流程](./docs/glassfish_startup_cn.md)
