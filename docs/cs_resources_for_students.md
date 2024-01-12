@@ -78,6 +78,7 @@
 * [Leetcode](https://leetcode.com/) 一个广受欢迎的在线编程题库
 * [Cracking the coding interview book](https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/0984782850) 一本深受程序员喜爱的面试指南书
 * [Neetcode](https://neetcode.io/) 另一个在线编程练习平台
+* [编程面试大学](https://github.com/jwasham/coding-interview-university/blob/main/translations/README-cn.md) 涵盖了算法、数据结构、面试准备和工作机会等主题，帮助你准备大公司的技术面试
 * [interviewing.io](https://interviewing.io/) 一个提供模拟技术面试的平台
 * [Pramp](https://www.pramp.com/) 一个模拟面试平台
 * [Meetapro](https://www.meetapro.com/) 一个可以找到专业人士进行模拟面试的网站
