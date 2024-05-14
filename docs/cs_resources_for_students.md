@@ -1,6 +1,6 @@
 # Incomplete List of Computer Science Learning Resources for College Students
 
-<img src="https://raw.githubusercontent.com/mz1999/material/master/images/202310071053668.jpeg" alt="cs resource" style="zoom:50%;" />
+<img src="https://cdn.mazhen.tech/images/202310071804322.jpeg" alt="cs resource" style="zoom:50%;" />
 
 *题图使用 [Microsoft Bing 图像创建](https://bing.com/create)器生成。*
 
@@ -8,6 +8,7 @@
 
 * 极客时间：[深入浅出计算机组成原理](https://time.geekbang.org/column/intro/100026001)
 * [Computer Systems: A Programmer's Perspective](http://csapp.cs.cmu.edu/3e/home.html) 从程序员的角度学习计算机系统，了解计算机系统的各个方面，包括硬件、操作系统、编译器和网络。这本书涵盖了数据表示、C语言程序的机器级表示、处理器架构、程序优化、内存层次结构、链接、异常控制流（异常、中断、进程和Unix信号）、虚拟内存和内存管理、系统级I/O、基本的网络编程和并发编程等概念。这些概念由一系列有趣且实践性强的实验室作业支持。
+* [Computer Systems: A programmer's Perspective 视频课](https://www.youtube.com/playlist?list=PLyboo2CCDSWnhzzzzDQ3OBPrRiIjl-aIE)
 * [编码](https://book.douban.com/subject/4822685/)  Code: The Hidden Language of Computer Hardware and Software
 * [Computer Science from the Bottom Up](https://bottomupcs.com/index.html) 采用“从下到上”的方法,从最基础的二进制、数据表示开始,逐步深入计算机内部工作原理,目的是帮助读者真正掌握计算机科学的基础知识。
 
@@ -16,6 +17,16 @@
 * [计算机底层的秘密](https://book.douban.com/subject/36370606/)
 * [穿越计算机的迷雾](https://book.douban.com/subject/30198087/)
 * [嵌入式C语言自我修养](https://book.douban.com/subject/35446929/)
+
+## 编程
+
+* [征服C指针](https://book.douban.com/subject/35384099/) 彻底理解和掌握指针的各种用法和技巧
+* [C专家编程](https://book.douban.com/subject/35218533/) Sun公司编译器和OS核心开发团队成员，对C的历史、语言特性、声明、数组、指针、链接、运行时、内存等问题进行了细致的讲解和深入的分析
+* [C from Scratch](https://github.com/theokwebb/C-from-Scratch) 一个学习 C 语言的从零开始的路线图，包括推荐的课程、项目和资源，以及进阶到 x86-64 汇编语言和操作系统内部的指导。
+* [Online Compiler, Visual Debugger](https://pythontutor.com/) 独特的逐步可视化调试工具，强烈推荐！
+* 极客时间：[深入 C 语言和程序运行原理](https://time.geekbang.org/column/intro/100100701)
+* [Linux/UNIX系统编程手册](Linux/UNIX系统编程手册) The Linux Programming Interface: A Linux and UNIX System Programming Handbook
+* [UNIX环境高级编程](https://book.douban.com/subject/25900403/) Advanced Programming in the UNIX Environment
 
 ## Linux
 
@@ -42,14 +53,6 @@
 * [图解HTTP](https://book.douban.com/subject/25863515/)
 * [网络是怎样连接的](https://book.douban.com/subject/26941639/)
 
-## 编程
-
-* [C专家编程](https://book.douban.com/subject/35218533/) Expert C Programming: Deep C Secrets
-* [Online Compiler, Visual Debugger](https://pythontutor.com/) 独特的逐步可视化调试工具，强烈推荐！
-* 极客时间：[深入 C 语言和程序运行原理](https://time.geekbang.org/column/intro/100100701)
-* [Linux/UNIX系统编程手册](Linux/UNIX系统编程手册) The Linux Programming Interface: A Linux and UNIX System Programming Handbook
-* [UNIX环境高级编程](https://book.douban.com/subject/25900403/) Advanced Programming in the UNIX Environment
-
 ## 编译原理
 
 * [程序是怎样跑起来的](https://book.douban.com/subject/26365491/)
@@ -73,6 +76,12 @@
 * [Developer Roadmaps](https://roadmap.sh/) 为开发者提供学习路线图和指南
 * [Online Coding Classes – For Beginners](https://www.freecodecamp.org/news/online-coding-classes-for-beginners-2022-guide/)  3000 小时的免费课程，涵盖了编程涉及到的方方面面
 
+## 在线课程
+
+* [educative](https://www.educative.io/) 为开发者提供交互式在线课程，重点关注技术领域的知识与技能
+* [edX](https://www.edx.org/) 由麻省理工学院（MIT）和哈佛大学共同创立的在线教育平台
+* [exercism](https://exercism.org/) 专注于通过有趣且具有挑战性的练习问题、支持建设性同行评审机制来促进积极参与和技能提升，从而培养对各种现代计算范式的熟练掌握。
+
 ## 技术面试
 
 * [Leetcode](https://leetcode.com/) 一个广受欢迎的在线编程题库
@@ -82,6 +91,19 @@
 * [interviewing.io](https://interviewing.io/) 一个提供模拟技术面试的平台
 * [Pramp](https://www.pramp.com/) 一个模拟面试平台
 * [Meetapro](https://www.meetapro.com/) 一个可以找到专业人士进行模拟面试的网站
+
+## 交互式教程
+
+* [Grep by example](https://antonz.org/grep-by-example/) 如何使用命令行工具 grep 进行文本搜索的交互式指南
+* [Learn Git Branching](https://learngitbranching.js.org/?locale=zh_CN) 一个交互式的在线教程，帮助用户学习并练习 Git 的基本使用方法
+
+## 大语言模型
+
+* [Learn Prompting](https://learnprompting.org/zh-Hans/docs/intro) 一个开源的、多元化社区构建的课程，旨在提供完整、公正的提示工程知识。
+* [提示工程指南](https://www.promptingguide.ai/zh) 介绍大语言模型（LLM）相关的论文研究、学习指南、模型、讲座、参考资料、大语言模型能力及其与其他工具的对接。
+* [面向开发者的大模型手册](https://datawhalechina.github.io/llm-cookbook/) 基于吴恩达大模型系列课程的翻译和复现项目，涵盖了从 Prompt Engineering 到 RAG 开发的全部流程，为国内开发者提供了学习和入门 LLM 相关项目的方式。
+* [LLM 应用开发实践笔记](https://aitutor.liduos.com/) 作者在学习基于大语言模型的应用开发过程中总结出来的经验和方法，包括理论学习和代码实践两部分。
+* [动手学大模型应用开发](https://datawhalechina.github.io/llm-universe/) 面向小白开发者的大模型应用开发教程，基于阿里云服务器，结合个人知识库助手项目，通过一个课程完成大模型开发的重点入门。
 
 ## iOS开发
 
