@@ -1,5 +1,6 @@
 ## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
 
+* [从源码构建 Linux 内核](./docs/build_kernel_from_source.md)
 * [一篇读懂 C 指针](./docs/c_pointers.md)
 * [遗留系统](./docs/legacy_system.md)
 
