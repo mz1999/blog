@@ -501,7 +501,9 @@ int arr[3][4];
 ```c
 int a[] = {1, 2, 3, 4, 5};
 char str[] = "abc";
+{% raw %}
 double matrix[][2] = {{1, 0}, {0, 1}};
+{% endraw %}
 char *color_name[] = {
     "red",
     "green",
