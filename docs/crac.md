@@ -153,7 +153,7 @@ CRIU 通过解析 `/proc/$pid/maps` 和 `/proc/$pid/smaps` 获取虚拟内存区
 
 `/proc/$pid/maps` 列出了当前进程 ($pid) **所有内存映射区域（Virtual Memory Areas - VMA）** 的详细信息，每一行代表一个连续的虚拟内存区域，通常包含以下字段，用空格分隔：
 
-```
+```shell
 起始地址-结束地址   权限    偏移量   设备号(主:次)  inode  路径名
 ```
 
@@ -163,7 +163,7 @@ CRIU 通过解析 `/proc/$pid/maps` 和 `/proc/$pid/smaps` 获取虚拟内存区
 
 例如查看应用服务器进程的 `maps` 文件内容：
 
-```
+```shell
 $cat /proc/10854/maps
 ...
 5b565de16000-5b565de17000 rw-p 00003000 103:02 34101432                  /home/mazhen/works/jdk-21.0.6/jdk/bin/java
@@ -180,7 +180,7 @@ $cat /proc/10854/maps
 `/proc/$pid/smaps`为每一个内存映射区域（**VMA**）提供了更详细的内存占用统计信息（物理内存占用、共享/私有、干净/脏、匿名、交换、锁定等），以及重要的内核内部标志 (VmFlags)。`smaps` 由多个**块 (block)** 组成，每个块对应 `/proc/$pid/maps` 文件中的一行（即一个 **VMA**）。
 
 还是以应用服务器进程为例：
-```
+```shell
 $cat /proc/10854/smaps
 ...
 5b5683910000-5b5683958000 rw-p 00000000 00:00 0                          [heap]
@@ -218,7 +218,7 @@ VmFlags: rd wr mr mw me ac sd
 
 CRIU 通过 `/proc/$pid/map_files/` 获取文件映射区域**底层文件对象的直接链接**，主要用于**可靠地访问和读取**这些文件映射区域的内容。
 
-```
+```shell
 $ ls -l /proc/10854/map_files   
 total 0
 lr-------- 1 mazhen mazhen 64 Apr 25 06:58 5b565de12000-5b565de13000 -> /home/mazhen/works/jdk-21.0.6/jdk/bin/java
@@ -233,7 +233,7 @@ CRIU 通过读取 `/proc/$pid/fd` 和 `/proc/$pid/fdinfo` 获取进程打开的�
 
 `/proc/$pid/fd`是一个**目录**，它包含**符号链接**，每个符号链接的名称对应一个已打开的**文件描述符编号**。例如：
 
-```
+```shell
 $ ls -l /proc/10854/fd
 ...
 l-wx------ 1 mazhen mazhen 64 Apr 25 02:00 2 -> 'pipe:[195498]'
@@ -250,7 +250,7 @@ lr-x------ 1 mazhen mazhen 64 Apr 25 07:21 479 -> anon_inode:inotify
 ```
 
 `/proc/$pid/fdinfo`也是一个**目录**，它包含**普通文件**（不是符号链接），每个文件的名称对应一个已打开的**文件描述符编号**。每个文件（例如`/proc/$pid/fdinfo/1`）包含关于相应文件描述符的**元数据和状态信息**。例如：
-```
+```shell
 $ ls -l /proc/10854/fdinfo 
 total 0
 -r--r--r-- 1 mazhen mazhen 0 Apr 25 07:31 0
@@ -274,16 +274,16 @@ ino:	32775204
 
 通过读取和解析 `/proc/$pid/stat` 文件，获取关于任务的**各种状态参数和统计数据**。`/proc/$pid/stat` 以**单行文本**的形式提供了关于进程的大量**状态信息 (status information)**，其中的信息由**空格**分隔，每个字段代表一个特定的进程属性或统计值。下面列出一些最核心和常用的字段：
 
-    - 可执行文件名 (comm)
-    - 进程状态 (state)
-    - 父进程 ID (ppid)
-    - 进程组 ID (pgrp)
-    - 会话 ID (session)
-    - 调度优先级和 nice 值 (priority, nice)
-    - 虚拟内存大小 (vsize)
-    - 常驻集大小 (rss)
-    - 进程启动时间 (starttime)
-    - 等待子进程的 CPU 时间 (cutime, cstime)
+- 可执行文件名 (comm)
+- 进程状态 (state)
+- 父进程 ID (ppid)
+- 进程组 ID (pgrp)
+- 会话 ID (session)
+- 调度优先级和 nice 值 (priority, nice)
+- 虚拟内存大小 (vsize)
+- 常驻集大小 (rss)
+- 进程启动时间 (starttime)
+- 等待子进程的 CPU 时间 (cutime, cstime)
 
 3. **注入寄生代码（Parasite Code）并转储内存** 
 
@@ -883,7 +883,7 @@ $ java -XX:CRaCRestoreFrom=cr
 现在，你可以再次访问 `http://localhost:8080`，应用应该能够正常响应。
 
 查看进程的父子关系：
-```
+```shell
 $ ps axfo pid,ppid,command
 ...
   31809   31807  \_ sshd: mazhen [priv]
