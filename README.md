@@ -1,5 +1,10 @@
 ## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
 
+* [CRaC 技术深度解析](./docs/crac.md)
+* [深入理解 Java Lambda 表达式](./docs/lambda.md)
+
+---
+
 * [为 PowerShell 配置 Emacs 模式](./docs/powershell_emacs.md)
 * [从源码构建 Linux 内核](./docs/build_kernel_from_source.md)
 * [一篇读懂 C 指针](./docs/c_pointers.md)
@@ -10,7 +15,7 @@
 * [深入探索 perf CPU Profiling 实现原理](./docs/perf_cpu_profiling.md)
 * [从源码构建 perf](./docs/build_perf_from_source.md)
 * [Latency Numbers Every Programmer Should Know](./docs/numbers_everyone_should_know.md)
-* [Incomplete List of Computer Science Learning Resources for College Students](./docs/cs_resources_for_students.md) [**长期更新**]
+* [Incomplete List of Computer Science Learning Resources for College Students](./docs/cs_resources_for_students.md) 
 * [Jakarta EE 应用服务器的事务处理](./docs/jakarta_ee_transaction.md)
 * [GlassFish Startup Process](./docs/glassfish_startup_en.md)
 * [GlassFish 启动流程](./docs/glassfish_startup_cn.md)
