@@ -1,5 +1,7 @@
 ## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
 
+* [使用 PrintAssembly 查看 JIT 编译后的汇编代码](./docs/printassembly.md)
+* [理解 CRaC 背后的 Linux 系统编程](./docs/crac_linux.md)
 * [CRaC 技术深度解析](./docs/crac.md)
 * [深入理解 Java Lambda 表达式](./docs/lambda.md)
 
