@@ -68,12 +68,29 @@
 
 除了 GC，还有一些常见的 VM 操作，同样需要在全局 Safepoint 中执行：
 
-*   **代码反优化 (Deoptimization)**：当 JIT 编译后的代码因为某些原因（如分支预测失败、加载了未被预期的子类等）需要回退到解释执行状态时，JVM 需要暂停线程，修改其栈帧，这个过程必须在 Safepoint 中进行。
-*   **类的重定义与热部署 (Class Redefinition)**：像我们在 IDE 中热更新代码，或者使用某些动态诊断工具时，JVM 需要替换掉已加载的类。这个操作会涉及修改类的元数据和可能存在的实例，显然也需要所有线程暂停。
-*   **线程堆栈转储 (Thread Dump)**：当我们使用 `jstack` 或其他工具来获取所有线程的堆栈快照时，为了得到一个准确、一致的视图，JVM 会触发一次 Safepoint。
-*   **堆转储 (Heap Dump)**：与线程转储类似，生成堆快照也需要在一个静态的内存视图下进行。
-*   **偏向锁批量撤销 (Bulk Revocation of Biased Locks)**：当某个类的偏向锁被大量撤销时，JVM 需要遍历所有线程栈和堆，找到并修改相关的锁记录。
-*   **其他 JVMTI 操作**：许多通过 JVMTI（JVM Tool Interface）提供的调试和监控功能，例如强制修改变量值等，也依赖 Safepoint 来保证操作的原子性和安全性。
+* **代码反优化 (Deoptimization)**：当 JIT 编译后的代码因为某些原因（如分支预测失败、加载了未被预期的子类等）需要回退到解释执行状态时，JVM 需要暂停线程，修改其栈帧，这个过程必须在 Safepoint 中进行。
+
+  
+
+* **类的重定义与热部署 (Class Redefinition)**：像我们在 IDE 中热更新代码，或者使用某些动态诊断工具时，JVM 需要替换掉已加载的类。这个操作会涉及修改类的元数据和可能存在的实例，显然也需要所有线程暂停。
+
+  
+
+* **线程堆栈转储 (Thread Dump)**：当我们使用 `jstack` 或其他工具来获取所有线程的堆栈快照时，为了得到一个准确、一致的视图，JVM 会触发一次 Safepoint。
+
+  
+
+* **堆转储 (Heap Dump)**：与线程转储类似，生成堆快照也需要在一个静态的内存视图下进行。
+
+  
+
+* **偏向锁批量撤销 (Bulk Revocation of Biased Locks)**：当某个类的偏向锁被大量撤销时，JVM 需要遍历所有线程栈和堆，找到并修改相关的锁记录。
+
+  
+
+* **其他 JVMTI 操作**：许多通过 JVMTI（JVM Tool Interface）提供的调试和监控功能，例如强制修改变量值等，也依赖 Safepoint 来保证操作的原子性和安全性。
+
+  
 
 因此，下一次当你的应用出现卡顿，而 GC 日志却“清白无辜”时，不妨思考一下，是否是上述这些原因之一，触发了一次意料之外的 Safepoint 停顿。
 
@@ -206,23 +223,33 @@ JVM 的全局操作（如 GC）必须等到**所有**线程都暂停后才能开
 1.  **提交任务**
 
     当一个需要 Safepoint 的 `VM_Operation` 被创建并提交到 `VMOperationQueue` 后，它就进入了等待处理的状态。
-
+    
+    
+    
 2.  **调度与发起**
 
     VMThread 在其主循环中，从队列里取出这个 `VM_Operation`。在确认该任务需要 Safepoint 后，它便调用 `SafepointSynchronize::begin()`，正式启动了将所有线程带入 Safepoint 的同步过程。
-
+    
+    
+    
 3.  **武装与轮询**
 
-    `begin()` 方法会设置一个全局的 Safepoint 状态标志，并遍历所有存活的 JavaThread 实例，修改它们各自线程本地的轮询状态。这个过程被称为 **“武装”（Arming）**。此后，每个正在运行的线程在执行到代码中的**轮询点（Poll Location）**时，就会检测到这个状态改变。
-
+    `begin()` 方法会设置一个全局的 Safepoint 状态标志，并遍历所有存活的 JavaThread 实例，修改它们各自线程本地的轮询状态。这个过程被称为 **“武装”（Arming）**。此后，每个正在运行的线程在执行到代码中的 **轮询点（Poll Location）** 时，就会检测到这个状态改变。
+    
+    
+    
 4.  **阻塞与同步**
 
     一旦检测到暂停请求，线程会主动执行 `SafepointSynchronize::block()` 方法，使自身进入阻塞状态，并在一个全局的屏障（WaitBarrier）上等待。VMThread 则会持续检查所有线程的状态，直到确认**所有**线程都已暂停。这个等待所有线程完成同步的耗时，就是 **TTSP（Time-To-Safepoint）**。
-
+    
+    
+    
 5.  **执行操作**
 
     一旦确认所有线程都已同步，JVM 就进入了一个全局静止状态。此时，VMThread 才安全地调用 `VM_Operation` 对象的核心 `doit()` 方法，执行实际的任务逻辑（例如，GC 扫描）。
-
+    
+    
+    
 6.  **恢复执行**
 
     操作完成后，VMThread 调用 `SafepointSynchronize::end()` 方法。该方法负责重置全局状态，解除对各线程轮询状态的“武装”，并最终通过 `WaitBarrier` 唤醒所有被阻塞的 Java 线程，使其恢复正常执行。
@@ -260,23 +287,25 @@ OpenJDK 的实现另辟蹊径，将软件层面的轮询检查转换为了一个
 
 ![Page Protection](https://cdn.mazhen.tech/2024/202507151741351.png)
 
-1.  **初始化：创建特殊的内存页**
+1. **初始化：创建特殊的内存页**
 
-    在 JVM 启动时，它会通过系统调用分配一个特殊的内存页，我们称之为**轮询页（Polling Page）**。这个页被设置为**没有任何访问权限**（`PROT_NONE`）。
+   在 JVM 启动时，它会通过系统调用分配一个特殊的内存页，我们称之为**轮询页（Polling Page）**。这个页被设置为**没有任何访问权限**（`PROT_NONE`）。
 
-    ```c++
-    // 源码片段中的逻辑 (SafepointMechanism.cpp)
-    // 分配内存，一部分作为 bad_page，一部分作为 good_page
-    char* polling_page = os::reserve_memory(allocation_size, !ExecMem, mtSafepoint);
-    
-    char* bad_page  = polling_page;
-    char* good_page = polling_page + page_size;
+   ```c++
+   // 源码片段中的逻辑 (SafepointMechanism.cpp)
+   // 分配内存，一部分作为 bad_page，一部分作为 good_page
+   char* polling_page = os::reserve_memory(allocation_size, !ExecMem, mtSafepoint);
+   
+   char* bad_page  = polling_page;
+   char* good_page = polling_page + page_size;
+   
+   os::protect_memory(bad_page,  page_size, os::MEM_PROT_NONE); // 关键！设置为无权限
+   os::protect_memory(good_page, page_size, os::MEM_PROT_READ); // 设置为可读
+   ```
 
-    os::protect_memory(bad_page,  page_size, os::MEM_PROT_NONE); // 关键！设置为无权限
-    os::protect_memory(good_page, page_size, os::MEM_PROT_READ); // 设置为可读
-    ```
+   从上面的代码中，可以看出，JVM 会分配两个相邻的页，一个无权限的 `bad_page` 和一个有读权限的 `good_page`，通过切换线程本地指针来指向其中一个。
 
-    从上面的代码中，可以看出，JVM 会分配两个相邻的页，一个无权限的 `bad_page` 和一个有读权限的 `good_page`，通过切换线程本地指针来指向其中一个。
+   
 
 2.  **JIT 编译：插入轮询指令**
     
@@ -289,22 +318,30 @@ OpenJDK 的实现另辟蹊径，将软件层面的轮询检查转换为了一个
     ```
     
     这条指令的作用是尝试从某个固定的虚拟地址（轮询页的地址）读取数据。
-
+    
+    
+    
 3.  **正常执行（快速路径）**
     
     在绝大多数时间里，JVM 并不需要线程暂停。
 
     此时，虽然 JIT 编译的代码中包含了内存读取指令，但 `test` 指令要访问的内存地址是**一个合法的、可读的普通内存地址**（`good_page`）。因此，`test` 指令每次都能成功执行，速度极快，几乎不产生任何性能开销，也不会引起分支预测失败。这是 Safepoint 机制性能如此之高的关键。
     
+    
+    
 4.  **发起 Safepoint（慢速路径）**
     
     当 `VMThread` 决定发起一次全局 Safepoint 时，它会执行一个关键动作：**将所有线程的轮询指针，都修改为指向那个被保护的、权限为 `PROT_NONE` 的轮询页地址（`bad_page`）**。
 
+    
+    
 5.  **触发与处理**
     
     此后，任何一个正在执行 JIT 代码的线程，当它再次运行到那条 `test` 内存读取指令时，就会试图访问一个 `PROT_NONE` 的地址。MMU 立刻捕获到这次非法访问，触发硬件异常，使系统陷入内核，并最终由操作系统向 JVM 进程发送 `SIGSEGV` 信号。
 
     JVM 内部预先注册了一个**自定义的 `SIGSEGV` 信号处理器**。当处理器被调用时，它会检查导致段错误的内存地址。如果发现地址正是那个特殊的轮询页，它便知道这并非程序缺陷，而是一个预期的 Safepoint 触发事件。于是，它会引导当前线程执行 `SafepointSynchronize::block()` 进入阻塞状态，等待 Safepoint 结束。
+    
+    
 
 通过这种方式，OpenJDK 将一个频繁的软件检查，转换成了一个在绝大多数情况下无开销的硬件操作，只在需要时才通过一个可控的硬件异常进入处理流程。
 
@@ -318,17 +355,23 @@ OpenJDK 的实现另辟蹊径，将软件层面的轮询检查转换为了一个
     
     当 Safepoint 被“武装”时，解释器会切换到一个**备用的派发表（Dispatch Table）**，这个备用表中的字节码实现，在执行循环跳转等指令时，会额外包含一条直接检查线程本地 Safepoint 标志位的指令。这种方式避免了复杂的信号处理，实现简单明了。
 
-*   **原生代码 (Native Code / JNI)**
+    
+    
+* **原生代码 (Native Code / JNI)**
 
-    当一个 Java 线程进入 JNI 调用，执行原生 C/C++ 代码时，它已经脱离了 JVM 的直接控制，自然也无法进行轮询。此时，JVM 会将这个线程标记为**正在执行原生代码（_thread_in_native）**。从 JVM 的视角看，这个线程的 Java 栈是固定的、安全的。
+  当一个 Java 线程进入 JNI 调用，执行原生 C/C++ 代码时，它已经脱离了 JVM 的直接控制，自然也无法进行轮询。此时，JVM 会将这个线程标记为**正在执行原生代码（_thread_in_native）**。从 JVM 的视角看，这个线程的 Java 栈是固定的、安全的。
 
-    当这个线程执行完原生代码，准备**返回 Java 世界**时，在过渡阶段，它**必须检查**全局的 Safepoint 标志。如果此时 JVM 正处于一个全局 Safepoint 中，该线程会被暂停在返回的关口，直到 Safepoint 结束，才能安全地继续执行 Java 代码。
+  当这个线程执行完原生代码，准备**返回 Java 世界**时，在过渡阶段，它**必须检查**全局的 Safepoint 标志。如果此时 JVM 正处于一个全局 Safepoint 中，该线程会被暂停在返回的关口，直到 Safepoint 结束，才能安全地继续执行 Java 代码。
+
+  
 
 *   **已阻塞的线程 (Blocked Threads)**
 
     这是最简单的一种情况。对于那些已经因为锁竞争、执行 `Object.wait()`、`Thread.sleep()` 或阻塞式 I/O 而处于阻塞状态的线程，它们本身就已经“静止”了，不会对 JVM 的全局操作构成威胁。
 
     因此，当 VMThread 在进行同步时，一旦检测到某个线程处于 `_thread_blocked` 状态，就会直接将其视为已完成同步，无需任何额外的操作。这些线程对 TTSP 的贡献时间为零。
+    
+    
 
 至此，OpenJDK 通过为不同执行模式量身定制的策略，构建了一套完整而高效的 Safepoint 协作机制。
 
@@ -359,15 +402,25 @@ OpenJDK 的实现另辟蹊径，将软件层面的轮询检查转换为了一个
 
 让我们以第一条日志为例，分解它的含义：
 
-*   **`[5.745s]`**: **时间戳**。表示从 JVM 启动到此次 Safepoint 操作开始的时间点。
+* **`[5.745s]`**: **时间戳**。表示从 JVM 启动到此次 Safepoint 操作开始的时间点。
 
-*   **`Safepoint "G1CollectForAllocation"`**: **触发原因**。这是最重要的信息之一，它告诉我们这次全局暂停是由什么事件引起的。这里的 `G1CollectForAllocation` 意味着 G1 垃圾收集器因为堆内存分配请求无法满足而触发了一次 Young GC。在第二条日志中，原因则是 `ThreadDump`，说明是外部工具请求了线程堆栈转储。
+  
 
-*   **`Time since last: 21216960 ns`**: **距离上次安全点的间隔**。表示从上一个 Safepoint 结束到本次开始，应用程序自由运行的时间（约 21.2 毫秒）。这个值反映了 Safepoint 的发生频率。
+* **`Safepoint "G1CollectForAllocation"`**: **触发原因**。这是最重要的信息之一，它告诉我们这次全局暂停是由什么事件引起的。这里的 `G1CollectForAllocation` 意味着 G1 垃圾收集器因为堆内存分配请求无法满足而触发了一次 Young GC。在第二条日志中，原因则是 `ThreadDump`，说明是外部工具请求了线程堆栈转储。
 
-*   **`Reaching safepoint: 23275 ns`**: **到达安全点耗时**。这就是我们反复强调的 **TTSP**。这里是约 23.3 微秒，一个非常健康的值。它表示从 JVM 发起请求到所有线程都暂停，总共花了多长时间。
+  
 
-*   **`At safepoint: 3836938 ns`**: **在安全点内执行操作的耗时**。这是真正的“Stop-The-World”时长，即 VMThread 执行其核心任务所花的时间。这里是约 3.8 毫秒。
+* **`Time since last: 21216960 ns`**: **距离上次安全点的间隔**。表示从上一个 Safepoint 结束到本次开始，应用程序自由运行的时间（约 21.2 毫秒）。这个值反映了 Safepoint 的发生频率。
+
+  
+
+* **`Reaching safepoint: 23275 ns`**: **到达安全点耗时**。这就是我们反复强调的 **TTSP**。这里是约 23.3 微秒，一个非常健康的值。它表示从 JVM 发起请求到所有线程都暂停，总共花了多长时间。
+
+  
+
+* **`At safepoint: 3836938 ns`**: **在安全点内执行操作的耗时**。这是真正的“Stop-The-World”时长，即 VMThread 执行其核心任务所花的时间。这里是约 3.8 毫秒。
+
+  
 
 *   **`Total: 3900312 ns`**: **总停顿时间**。约等于 `Reaching safepoint` + `At safepoint` 的总和。这是应用线程从被请求暂停到最终被唤醒所经历的全部时间。
 
@@ -375,9 +428,11 @@ OpenJDK 的实现另辟蹊径，将软件层面的轮询检查转换为了一个
 
 通过分析这份日志，我们可以清晰地诊断出应用的停顿模式：
 
-1.  **停顿的元凶是谁？**
+1. **停顿的元凶是谁？**
 
-    观察 **`Safepoint "Cause"`** 字段。如果大部分停顿都由 `G1CollectForAllocation` 或类似 GC 原因引起，说明性能瓶颈在于**对象分配速率过高**或**堆内存不足**。如果看到很多 `Deoptimize` 或 `RevokeBias`，则可能需要关注 JIT 编译或锁竞争的问题。
+   观察 **`Safepoint "Cause"`** 字段。如果大部分停顿都由 `G1CollectForAllocation` 或类似 GC 原因引起，说明性能瓶颈在于**对象分配速率过高**或**堆内存不足**。如果看到很多 `Deoptimize` 或 `RevokeBias`，则可能需要关注 JIT 编译或锁竞争的问题。
+
+   
 
 2.  **是 TTSP 过长，还是 VM 操作本身耗时？**
 
@@ -385,7 +440,9 @@ OpenJDK 的实现另辟蹊径，将软件层面的轮询检查转换为了一个
 
     *   如果 **`At safepoint` 很大**（通常是毫秒级别），说明是 VM 操作本身很耗时。比如 GC 耗时长，就应该去调优 GC 参数或分析内存使用。
 
-    *   如果 **`Reaching safepoint` 很大**（比如也达到了毫秒级别），这通常是一个更危险的信号，说明有线程花了很长时间才响应暂停请求。此时，你应该去检查代码中是否存在没有 Safepoint 轮询点的长计算，或者是否存在严重的 CPU 资源争抢。
+    * 如果 **`Reaching safepoint` 很大**（比如也达到了毫秒级别），这通常是一个更危险的信号，说明有线程花了很长时间才响应暂停请求。此时，你应该去检查代码中是否存在没有 Safepoint 轮询点的长计算，或者是否存在严重的 CPU 资源争抢。
+    
+      
 
 以文章开头提供的日志为例，我们可以看到绝大多数停顿都是由 GC (`G1CollectForAllocation`, `G1PauseRemark` 等) 引起的，并且 `At safepoint` 时间远大于 `Reaching safepoint` 时间。这清晰地表明，该应用的停顿瓶颈在于 GC 操作本身，而不是 TTSP。
 
@@ -395,12 +452,20 @@ OpenJDK 的实现另辟蹊径，将软件层面的轮询检查转换为了一个
 
 希望通过本文的介绍，你能够建立起关于 Safepoint 的几个核心认知：
 
-*   **Safepoint 是所有 STW 停顿的基础**。我们常说的 GC STW，其本质就是一次全局 Safepoint 操作。但 GC 只是触发 Safepoint 的众多“客户”之一，代码反优化、线程转储等多种 VM 操作同样依赖它。
+* **Safepoint 是所有 STW 停顿的基础**。我们常说的 GC STW，其本质就是一次全局 Safepoint 操作。但 GC 只是触发 Safepoint 的众多“客户”之一，代码反优化、线程转储等多种 VM 操作同样依赖它。
 
-*   **这是一种“协作”，而非“命令”**。JVM 无法在任意时刻强行中断一个正在高速运行的线程。它必须依赖线程主动在预设的轮询点检查并自行暂停。这种协作式机制，是保证所有全局操作安全、正确的前提。
+  
 
-*   **停顿时间由两部分构成**。一次完整的 Safepoint 停顿，包含了所有线程**到达 Safepoint 的时间（TTSP）**和**在 Safepoint 内执行 VM 操作的时间**。仅仅关注 GC 日志里的操作耗时是不够的，被忽略的 TTSP 常常是导致应用卡顿的“隐形杀手”。
+* **这是一种“协作”，而非“命令”**。JVM 无法在任意时刻强行中断一个正在高速运行的线程。它必须依赖线程主动在预设的轮询点检查并自行暂停。这种协作式机制，是保证所有全局操作安全、正确的前提。
 
-*   **高效的实现源于对底层的深刻理解**。OpenJDK 通过巧妙地利用页保护和信号处理机制，为 JIT 编译代码实现了近乎零开销的轮询，这充分展现了现代虚拟机在性能工程上的智慧。
+  
+
+* **停顿时间由两部分构成**。一次完整的 Safepoint 停顿，包含了所有线程**到达 Safepoint 的时间（TTSP）**和**在 Safepoint 内执行 VM 操作的时间**。仅仅关注 GC 日志里的操作耗时是不够的，被忽略的 TTSP 常常是导致应用卡顿的“隐形杀手”。
+
+  
+
+* **高效的实现源于对底层的深刻理解**。OpenJDK 通过巧妙地利用页保护和信号处理机制，为 JIT 编译代码实现了近乎零开销的轮询，这充分展现了现代虚拟机在性能工程上的智慧。
+
+  
 
 最终，理解 Safepoint 并不只是为了满足技术上的好奇心。它为我们提供了一个全新的、更底层的视角来审视应用的性能问题。下一次，当你面对一个棘手的延迟或性能抖动问题，在深入分析业务逻辑和 GC 日志之外，不妨也加上 `-Xlog:safepoint`，看一看那些隐藏在幕后的“集体暂停”，或许，问题的答案就藏在其中。
