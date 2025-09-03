@@ -1,5 +1,6 @@
 ## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
 
+* [追踪 Java 进程创建的 domain socket](./docs/trace_domain_socket.md)
 * [揭秘 JVM 停顿的背后：深入理解 Safepoint](./docs/safepoint.md)
 * [Perf 的 cpu-clock 与 cpu-cycles 采样实现与对比](./docs/cpu-clock_cpu-cycles.md)
 * [Wall-Clock 与 CPU-Cycles 采样的区别](./docs/wall-clock_cpu-cycles.md)
