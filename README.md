@@ -1,5 +1,7 @@
 ## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
 
+* [Tracing and Locating Socket Creation in Java Processes](./docs/trace_java_socket_creation-en.md)
+* [追踪定位 Java 进程的 Socket 创建](./docs/trace_java_socket_creation-en.md)
 * [追踪 Java 进程创建的 domain socket](./docs/trace_domain_socket.md)
 * [揭秘 JVM 停顿的背后：深入理解 Safepoint](./docs/safepoint.md)
 * [Perf 的 cpu-clock 与 cpu-cycles 采样实现与对比](./docs/cpu-clock_cpu-cycles.md)
