@@ -1,5 +1,6 @@
 ## 欢迎访问个人站点 [mazhen.tech](https://mazhen.tech)
 
+* [使用 DWARF 还原完整的 glibc 调用堆栈](./docs/stack_trace_dwarf.md)
 * [Tracing and Locating Socket Creation in Java Processes](./docs/trace_java_socket_creation-en.md)
 * [追踪定位 Java 进程的 Socket 创建](./docs/trace_java_socket_creation.md)
 * [追踪 Java 进程创建的 domain socket](./docs/trace_domain_socket.md)
